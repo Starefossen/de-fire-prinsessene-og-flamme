@@ -7,11 +7,24 @@ import json
 with open('source.html', 'r', encoding='utf-8') as f:
     soup = bs4.BeautifulSoup(f, 'html.parser')
     
-# Add PWA manifest to head
+# Add PWA manifest and fonts to head
 head = soup.find('head')
-if head and not soup.find('link', attrs={'rel': 'manifest'}):
-    manifest_link = soup.new_tag('link', rel='manifest', href='manifest.json')
-    head.append(manifest_link)
+if head:
+    # Add manifest
+    if not soup.find('link', attrs={'rel': 'manifest'}):
+        manifest_link = soup.new_tag('link', rel='manifest', href='manifest.json')
+        head.append(manifest_link)
+    
+    # Add iOS PWA Meta Tags
+    if not soup.find('meta', attrs={'name': 'apple-mobile-web-app-capable'}):
+        head.append(soup.new_tag('meta', attrs={'name': 'apple-mobile-web-app-capable', 'content': 'yes'}))
+        head.append(soup.new_tag('meta', attrs={'name': 'apple-mobile-web-app-status-bar-style', 'content': 'black-translucent'}))
+        head.append(soup.new_tag('meta', attrs={'name': 'theme-color', 'content': '#111827'}))
+        head.append(soup.new_tag('link', rel='apple-touch-icon', href='bilder/forside.png'))
+
+    # Add Outfit font
+    font_link = soup.new_tag('link', rel='stylesheet', href='https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap')
+    head.append(font_link)
 
 # Update CSS
 style_tag = soup.find('style')
