@@ -1,9 +1,17 @@
 import bs4
 import math
+import os
+import json
 
 # Read original untouched file
 with open('source.html', 'r', encoding='utf-8') as f:
     soup = bs4.BeautifulSoup(f, 'html.parser')
+    
+# Add PWA manifest to head
+head = soup.find('head')
+if head and not soup.find('link', attrs={'rel': 'manifest'}):
+    manifest_link = soup.new_tag('link', rel='manifest', href='manifest.json')
+    head.append(manifest_link)
 
 # Update CSS
 style_tag = soup.find('style')
@@ -492,6 +500,13 @@ if body:
     script = soup.new_tag('script')
     script.string = """
       document.addEventListener('DOMContentLoaded', () => {
+        // Register Service Worker for Offline PWA
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
+          });
+        }
+        
         const pages = document.querySelectorAll('.page');
         const bookTrack = document.getElementById('book-track');
         const persistentChapter = document.getElementById('persistent-chapter');
@@ -605,3 +620,63 @@ if body:
 
 with open('index.html', 'w', encoding='utf-8') as f:
     f.write(str(soup))
+
+# Generate PWA Manifest
+manifest = {
+    "name": "De fire prinsessene og Flamme",
+    "short_name": "Prinsessene",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#111827",
+    "theme_color": "#ffcfe6",
+    "icons": [
+        {
+            "src": "bilder/forside.png",
+            "sizes": "1024x1024",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}
+with open('manifest.json', 'w', encoding='utf-8') as f:
+    json.dump(manifest, f, indent=2)
+
+# Generate Service Worker
+cache_name = "prinsessene-v1"
+assets = ["./", "./index.html", "./manifest.json"]
+
+if os.path.exists("bilder"):
+    for file in os.listdir("bilder"):
+        if file.endswith(".png") or file.endswith(".jpg"):
+            assets.append(f"./bilder/{file}")
+
+sw_content = f"""const CACHE_NAME = '{cache_name}';
+const ASSETS = {json.dumps(assets, separators=(',', ':'))};
+
+self.addEventListener('install', event => {{
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(ASSETS))
+      .then(() => self.skipWaiting())
+  );
+}});
+
+self.addEventListener('activate', event => {{
+  event.waitUntil(
+    caches.keys().then(keys => {{
+      return Promise.all(
+        keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
+      );
+    }}).then(() => self.clients.claim())
+  );
+}});
+
+self.addEventListener('fetch', event => {{
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => response || fetch(event.request))
+  );
+}});
+"""
+with open('sw.js', 'w', encoding='utf-8') as f:
+    f.write(sw_content)

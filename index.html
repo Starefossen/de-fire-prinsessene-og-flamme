@@ -453,7 +453,7 @@
   /* Hide original up links */
   .opp { display: none !important; }
 </style>
-</head>
+<link href="manifest.json" rel="manifest"/></head>
 <body><div class="book-overlay"><div class="persistent-chapter" id="persistent-chapter"></div><div class="persistent-page" id="persistent-page"></div></div>
 <div aria-hidden="true" class="himmel" id="himmel"></div>
 <main class="book-track" id="book-track">
@@ -797,6 +797,13 @@
 </script>
 <script>
       document.addEventListener('DOMContentLoaded', () => {
+        // Register Service Worker for Offline PWA
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
+          });
+        }
+        
         const pages = document.querySelectorAll('.page');
         const bookTrack = document.getElementById('book-track');
         const persistentChapter = document.getElementById('persistent-chapter');
