@@ -715,11 +715,14 @@ if body:
         lightbox.appendChild(lbImg);
         document.body.appendChild(lightbox);
 
-        document.querySelectorAll('.page-content img').forEach(img => {
-          img.addEventListener('click', () => {
+        document.body.addEventListener('click', (e) => {
+          const img = e.target.closest('.page-content img, .page-content figure img');
+          if (img) {
+            e.preventDefault();
+            e.stopPropagation();
             lbImg.src = img.src;
             lightbox.classList.add('active');
-          });
+          }
         });
 
         lightbox.addEventListener('click', () => {
