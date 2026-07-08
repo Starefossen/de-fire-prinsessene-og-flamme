@@ -53,14 +53,14 @@ if style_tag:
     text-align: center;
   }
   #prolog figure[data-fil="bilder/persongalleri"] img {
-    max-height: 25vh !important;
+    max-height: 22vh !important;
     width: auto;
     margin: 0 auto;
   }
 
   /* GLOBAL IMAGE SAFEGUARD */
   .page-content img {
-    max-height: calc(100svh - 16rem);
+    max-height: 40vh;
     object-fit: contain;
   }
   /* OVERVIEW MODE */
@@ -216,7 +216,7 @@ if style_tag:
   body {
     overflow: hidden;
     position: relative;
-    line-height: 1.6;
+    line-height: 1.5;
     letter-spacing: 0.02em;
     overflow-wrap: break-word;
     word-wrap: break-word;
