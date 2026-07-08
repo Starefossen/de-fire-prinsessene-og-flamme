@@ -12,7 +12,7 @@ for figure in soup.find_all('figure', attrs={'data-fil': True}):
     img_path = figure['data-fil'] + '.jpg'
     if os.path.exists(img_path):
         figure.clear()
-        img = soup.new_tag('img', src=img_path, loading='lazy')
+        img = soup.new_tag('img', src=img_path)
         figure.append(img)
         
 # Add PWA manifest and fonts to head
