@@ -840,26 +840,6 @@
   })();
 </script>
 <script>
-  // Bilder: prøver å laste bilder/kapX-Y.(jpg|png|webp) – viser bildet hvis det finnes,
-  // ellers står plassholderen med beskrivelsen igjen.
-  document.querySelectorAll('.illu[data-fil]').forEach(function(f){
-    var base = f.getAttribute('data-fil');
-    var typer = ['jpg','png','webp'];
-    (function prov(i){
-      if(i >= typer.length) return; // ingen fil funnet – behold plassholder
-      var img = new Image();
-      img.onload = function(){
-        img.alt = f.querySelector('.illu-tekst') ? f.querySelector('.illu-tekst').textContent : '';
-        img.loading = 'lazy';
-        f.innerHTML = '';
-        f.appendChild(img);
-      };
-      img.onerror = function(){ prov(i+1); };
-      img.src = base + '.' + typer[i];
-    })(0);
-  });
-</script>
-<script>
       document.addEventListener('DOMContentLoaded', () => {
         // Register Service Worker for Offline PWA
         if ('serviceWorker' in navigator) {
