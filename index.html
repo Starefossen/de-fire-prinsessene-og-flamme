@@ -110,7 +110,7 @@
 
 
   /* ---------- illustrasjoner ---------- */
-  .illu{margin:1.8rem 0; break-inside: avoid; -webkit-column-break-inside: avoid; page-break-inside: avoid; display: block;}
+  .illu{margin:1.2rem 0; break-inside: avoid; -webkit-column-break-inside: avoid; page-break-inside: avoid; display: inline-block; width: 100%;}
   .illu img{width:100%;border-radius:18px;display:block;box-shadow:0 10px 40px rgba(0,0,0,.45)}
   .illu-boks{
     border:2px dashed rgba(255,168,210,.45);border-radius:18px;
@@ -141,7 +141,7 @@
 
   /* GLOBAL IMAGE SAFEGUARD */
   .page-content img {
-    max-height: calc(100svh - 22rem);
+    max-height: calc(100svh - 16rem);
     object-fit: contain;
   }
   /* OVERVIEW MODE */
@@ -340,7 +340,7 @@
     display: block;
     width: 100%;
     max-width: 1400px;
-    height: calc(100svh - 6rem);
+    height: calc(100svh - 4rem);
     margin: 0 auto;
     
     /* Glassmorphism book spread */
@@ -402,7 +402,7 @@
 
   @media (min-width: 900px) {
     .page-content {
-      padding: 4rem 5rem;
+      padding: 3rem 4rem;
       column-count: 2;
       column-gap: 6rem;
     }

@@ -60,7 +60,7 @@ if style_tag:
 
   /* GLOBAL IMAGE SAFEGUARD */
   .page-content img {
-    max-height: calc(100svh - 22rem);
+    max-height: calc(100svh - 16rem);
     object-fit: contain;
   }
   /* OVERVIEW MODE */
@@ -259,7 +259,7 @@ if style_tag:
     display: block;
     width: 100%;
     max-width: 1400px;
-    height: calc(100svh - 6rem);
+    height: calc(100svh - 4rem);
     margin: 0 auto;
     
     /* Glassmorphism book spread */
@@ -321,7 +321,7 @@ if style_tag:
 
   @media (min-width: 900px) {
     .page-content {
-      padding: 4rem 5rem;
+      padding: 3rem 4rem;
       column-count: 2;
       column-gap: 6rem;
     }
