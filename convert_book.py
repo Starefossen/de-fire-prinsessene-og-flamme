@@ -48,45 +48,63 @@ if style_tag:
   
   /* OVERVIEW MODE */
   .book-track.overview-mode {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 3rem;
     padding: 6rem 2rem;
     height: 100vh;
     overflow-y: auto;
     overflow-x: hidden;
     scroll-snap-type: none;
-    align-content: start;
+    align-content: flex-start;
     background: rgba(0,0,0,0.5);
   }
   
   .book-track.overview-mode .page {
-    flex: none;
-    width: 100%;
-    height: 400px;
+    flex: 0 0 20vw;
+    width: 20vw;
+    height: 20vh;
     padding: 0;
+    margin: 0;
+    position: relative;
     scroll-snap-align: none;
     overflow: hidden;
     border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     background: transparent;
   }
   
   .book-track.overview-mode .page:hover {
-    transform: scale(1.02);
-    box-shadow: 0 8px 25px rgba(255, 207, 230, 0.4);
+    transform: scale(1.05);
+    box-shadow: 0 12px 40px rgba(255, 207, 230, 0.6);
     z-index: 10;
   }
   
   .book-track.overview-mode .page-content {
-    width: 400%;
-    height: 400%;
-    transform: scale(0.25);
+    position: absolute;
+    top: 0; left: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none !important;
+    margin: 0 !important;
+    transform: scale(0.2) !important;
     transform-origin: top left;
-    padding: 4rem;
-    pointer-events: none; /* Disable interaction in miniature view */
+    pointer-events: none;
+    overflow: hidden !important;
+  }
+  
+  @media (max-width: 899px) {
+    .book-track.overview-mode .page {
+      flex: 0 0 45vw;
+      width: 45vw;
+      height: 45vh;
+    }
+    .book-track.overview-mode .page-content {
+      transform: scale(0.45) !important;
+    }
   }
 
   .overlay-header {
