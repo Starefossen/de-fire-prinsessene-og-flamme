@@ -3,6 +3,8 @@ import math
 import os
 import json
 
+import subprocess
+
 # Read original untouched file
 with open('source.html', 'r', encoding='utf-8') as f:
     soup = bs4.BeautifulSoup(f, 'html.parser')
@@ -12,7 +14,23 @@ for figure in soup.find_all('figure', attrs={'data-fil': True}):
     img_path = figure['data-fil'] + '.jpg'
     if os.path.exists(img_path):
         figure.clear()
+        
+        # Get image dimensions to prevent WebKit multicol layout bugs
+        width, height = None, None
+        try:
+            out = subprocess.check_output(['sips', '-g', 'pixelWidth', '-g', 'pixelHeight', img_path], universal_newlines=True)
+            for line in out.split('\n'):
+                if 'pixelWidth' in line: width = line.split(':')[1].strip()
+                elif 'pixelHeight' in line: height = line.split(':')[1].strip()
+        except:
+            pass
+            
         img = soup.new_tag('img', src=img_path)
+        if width and height:
+            img['width'] = width
+            img['height'] = height
+            img['loading'] = 'lazy' # Safe to lazy load now that dimensions are known
+            
         figure.append(img)
         
 # Add PWA manifest and fonts to head
