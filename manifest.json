@@ -7,9 +7,9 @@
   "theme_color": "#ffcfe6",
   "icons": [
     {
-      "src": "bilder/forside.png",
+      "src": "bilder/forside.jpg",
       "sizes": "1024x1024",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     }
   ]

@@ -752,9 +752,9 @@ manifest = {
     "theme_color": "#ffcfe6",
     "icons": [
         {
-            "src": "bilder/forside.png",
+            "src": "bilder/forside.jpg",
             "sizes": "1024x1024",
-            "type": "image/png",
+            "type": "image/jpeg",
             "purpose": "any maskable"
         }
     ]
@@ -763,12 +763,12 @@ with open('manifest.json', 'w', encoding='utf-8') as f:
     json.dump(manifest, f, indent=2)
 
 # Generate Service Worker
-cache_name = "prinsessene-v1"
+cache_name = "prinsessene-v2"
 assets = ["./", "./index.html", "./manifest.json"]
 
 if os.path.exists("bilder"):
     for file in os.listdir("bilder"):
-        if file.endswith(".png") or file.endswith(".jpg"):
+        if file.endswith(".jpg"):
             assets.append(f"./bilder/{file}")
 
 sw_content = f"""const CACHE_NAME = '{cache_name}';
