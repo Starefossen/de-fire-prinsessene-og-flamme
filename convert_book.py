@@ -220,7 +220,7 @@ if style_tag:
 
   
   .person-wrapper {
-    display: inline-flex;
+    display: flex;
     width: 100%;
     flex-direction: row;
     gap: 1.5rem;
@@ -354,7 +354,7 @@ if style_tag:
 
   @media (min-width: 900px) {
     .page-content {
-      padding: 3rem 4rem;
+      padding: 1.5rem 4rem;
       column-count: 2;
       column-gap: 6rem;
     }
