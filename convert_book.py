@@ -129,6 +129,8 @@ if style_tag:
     color: white;
     width: 44px;
     height: 44px;
+    min-width: 44px;
+    box-sizing: border-box;
     padding: 0;
     border-radius: 8px;
     font-size: 1.1rem;
