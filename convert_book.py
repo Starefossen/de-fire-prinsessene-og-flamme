@@ -499,33 +499,37 @@ if main_tag:
         elif h2:
             chapter_title = h2.text.strip()
 
-        figures = article.find_all('figure')
-        
-        # Extract text elements
-        text_elements = []
+        # Extract elements and calculate lengths
+        all_elements = []
+        num_figures = 0
         for child in list(article.children):
             if isinstance(child, bs4.NavigableString) and child.strip() == '':
                 continue
             if child.name == 'figure':
-                continue
-            text_elements.append(child)
+                num_figures += 1
+            all_elements.append(child)
             
-        total_len = sum(len(el.text) for el in text_elements)
+        def get_len(el):
+            if el.name == 'figure':
+                return 400
+            return len(el.text)
+
+        total_len = sum(get_len(el) for el in all_elements)
         
         MAX_CHARS = 1000
-        num_pages = max(max(1, len(figures)), int(total_len / MAX_CHARS) + 1)
+        num_pages = max(max(1, num_figures), int(total_len / MAX_CHARS) + 1)
         target_len = total_len / num_pages
         
         chunks = []
         current_chunk = []
         current_len = 0
         
-        for j, el in enumerate(text_elements):
+        for j, el in enumerate(all_elements):
             current_chunk.append(el)
-            current_len += len(el.text)
+            current_len += get_len(el)
             
             if len(chunks) < num_pages - 1:
-                next_el = text_elements[j+1] if j+1 < len(text_elements) else None
+                next_el = all_elements[j+1] if j+1 < len(all_elements) else None
                 is_next_heading = next_el and next_el.name in ['h2', 'h3']
                 
                 if is_next_heading and current_len >= target_len * 0.5:
@@ -544,30 +548,18 @@ if main_tag:
         if current_chunk:
             chunks.append(current_chunk)
             
-        while len(chunks) < num_pages:
-            chunks.append([])
-            
-        while len(figures) < len(chunks):
-            figures.append(None)
-            
         chap = soup.new_tag('article', attrs={'class': 'chapter'})
         for i in range(len(chunks)):
-            page = soup.new_tag('section', attrs={'class': 'page', 'data-chapter': chapter_title})
+            # Give each page an ID to allow deep linking
+            safe_chapter = chapter_title.replace(' ', '-').replace('·', '').replace('—', '-').lower()
+            import re
+            safe_chapter = re.sub(r'-+', '-', safe_chapter).strip('-')
+            page_id = f"page-{safe_chapter}-{i+1}"
+            
+            page = soup.new_tag('section', attrs={'class': 'page', 'data-chapter': chapter_title, 'id': page_id})
             content = soup.new_tag('div', attrs={'class': 'page-content'})
             
             chunk = chunks[i]
-            fig = figures[i]
-            
-            if fig:
-                insert_idx = 0
-                for k, el in enumerate(chunk):
-                    if el.name in ['h2', 'h3']:
-                        insert_idx = k + 1
-                        break
-                if insert_idx == 0 and len(chunk) > 0:
-                    insert_idx = 1
-                chunk.insert(insert_idx, fig)
-            
             for el in chunk:
                 content.append(el)
             
@@ -649,6 +641,9 @@ if body:
         const observer = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
             if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+              if (entry.target.id) {
+                history.replaceState(null, null, '#' + entry.target.id);
+              }
               const index = Array.from(pages).indexOf(entry.target);
               persistentPage.textContent = `Side ${index + 1} av ${pages.length}`;
               
@@ -682,15 +677,30 @@ if body:
         });
 
         // Keyboard Navigation (Arrow keys)
+        let isScrolling = false;
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight') {
+            if (isScrolling) return;
+            if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
                 const current = Array.from(pages).findIndex(p => p.getBoundingClientRect().left >= -10 && p.getBoundingClientRect().left < window.innerWidth - 10);
-                if (current >= 0 && current < pages.length - 1) pages[current + 1].scrollIntoView({ behavior: 'smooth' });
-            } else if (e.key === 'ArrowLeft') {
-                const current = Array.from(pages).findIndex(p => p.getBoundingClientRect().left >= -10 && p.getBoundingClientRect().left < window.innerWidth - 10);
-                if (current > 0) pages[current - 1].scrollIntoView({ behavior: 'smooth' });
+                if (e.key === 'ArrowRight' && current >= 0 && current < pages.length - 1) {
+                    isScrolling = true;
+                    pages[current + 1].scrollIntoView({ behavior: 'smooth' });
+                    setTimeout(() => isScrolling = false, 500);
+                } else if (e.key === 'ArrowLeft' && current > 0) {
+                    isScrolling = true;
+                    pages[current - 1].scrollIntoView({ behavior: 'smooth' });
+                    setTimeout(() => isScrolling = false, 500);
+                }
             }
         });
+        
+        // Handle deep link on load
+        if (window.location.hash) {
+            const targetPage = document.querySelector(window.location.hash);
+            if (targetPage) {
+                setTimeout(() => targetPage.scrollIntoView(), 100);
+            }
+        }
         
         // Lightbox Animation Logic
         const lightbox = document.createElement('div');
