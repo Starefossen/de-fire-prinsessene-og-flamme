@@ -516,10 +516,7 @@ if main_tag:
 
         total_len = sum(get_len(el) for el in all_elements)
         
-        MAX_CHARS = 1000
-        num_pages = max(max(1, num_figures), int(total_len / MAX_CHARS) + 1)
-        target_len = total_len / num_pages
-        
+        MAX_CHARS = 1400
         chunks = []
         current_chunk = []
         current_len = 0
@@ -528,23 +525,22 @@ if main_tag:
             current_chunk.append(el)
             current_len += get_len(el)
             
-            if len(chunks) < num_pages - 1:
-                next_el = all_elements[j+1] if j+1 < len(all_elements) else None
-                is_next_heading = next_el and next_el.name in ['h2', 'h3']
+            next_el = all_elements[j+1] if j+1 < len(all_elements) else None
+            is_next_heading = next_el and next_el.name in ['h2', 'h3']
+            
+            if is_next_heading and current_len >= MAX_CHARS * 0.4:
+                chunks.append(current_chunk)
+                current_chunk = []
+                current_len = 0
+                continue
                 
-                if is_next_heading and current_len >= target_len * 0.5:
-                    chunks.append(current_chunk)
-                    current_chunk = []
-                    current_len = 0
+            if current_len >= MAX_CHARS:
+                if el.name in ['h2', 'h3'] or (el.name == 'p' and 'kap-nr' in el.get('class', [])):
                     continue
-                    
-                if current_len >= target_len:
-                    if el.name in ['h2', 'h3'] or (el.name == 'p' and 'kap-nr' in el.get('class', [])):
-                        continue
-                    chunks.append(current_chunk)
-                    current_chunk = []
-                    current_len = 0
-                    
+                chunks.append(current_chunk)
+                current_chunk = []
+                current_len = 0
+                
         if current_chunk:
             chunks.append(current_chunk)
             
