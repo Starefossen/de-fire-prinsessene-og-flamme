@@ -127,9 +127,9 @@ if style_tag:
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: white;
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
     box-sizing: border-box;
     padding: 0;
     border-radius: 8px;
@@ -150,18 +150,6 @@ if style_tag:
   .action-btn svg {
     width: 20px;
     height: 20px;
-  }
-
-  .overview-btn {
-    background: rgba(29, 35, 70, 0.8);
-    border: 1px solid var(--rosa);
-    color: white;
-    padding: 0.5rem 1rem;
-    /* border-radius removed */
-    font-family: 'Outfit', sans-serif;
-    cursor: pointer;
-    backdrop-filter: blur(5px);
-    transition: all 0.2s ease;
   }
   .overview-btn:hover {
     background: var(--rosa);
@@ -754,7 +742,7 @@ if body:
     controls_group.append(font_up_btn)
 
     # Overview button (SVG icon)
-    overview_btn = soup.new_tag('button', attrs={'id': 'overview-btn', 'class': 'action-btn overview-btn'})
+    overview_btn = soup.new_tag('button', attrs={'id': 'overview-btn', 'class': 'action-btn'})
     overview_btn.append(bs4.BeautifulSoup('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>', 'html.parser'))
     controls_group.append(overview_btn)
     
