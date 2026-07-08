@@ -446,8 +446,8 @@ if style_tag:
 
 main_tag = soup.find('main')
 if main_tag:
-    main_tag['class'] = main_tag.get('class', []) + ['book-track']
-    main_tag['id'] = 'book-track'
+    main_tag['class'] = main_tag.get('class', []) + ['book-container']
+    main_tag['id'] = 'book-container'
 
     new_children = []
 
