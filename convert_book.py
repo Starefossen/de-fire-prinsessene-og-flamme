@@ -196,9 +196,10 @@ if style_tag:
 
   
   p {
+    margin-top: 0;
+    margin-bottom: 1.2rem;
     orphans: 3;
     widows: 3;
-    margin-bottom: 1.2rem;
   }
   
   h2, h3 {
