@@ -980,7 +980,7 @@ with open('manifest.json', 'w', encoding='utf-8') as f:
 
 # Generate Service Worker
 import time
-    cache_name = f"prinsessene-v{int(time.time())}"
+cache_name = f"prinsessene-v{int(time.time())}"
 assets = ["./", "./index.html", "./manifest.json"]
 
 if os.path.exists("bilder"):
