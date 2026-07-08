@@ -832,6 +832,7 @@ if body:
         // Mouse Wheel to Horizontal Scroll Translation
         let wheelTimeout;
         bookTrack.addEventListener('wheel', (e) => {
+            if (bookTrack.classList.contains('overview-mode')) return;
             // Check if user is scrolling inside a vertically scrollable element
             let target = e.target;
             while(target && target !== bookTrack) {
