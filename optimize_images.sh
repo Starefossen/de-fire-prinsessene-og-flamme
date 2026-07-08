@@ -18,9 +18,9 @@ for f in bilder/*.png; do
     # Extract filename without extension
     filename=$(basename "$f" .png)
     
-    # Skip if JPG already exists
-    if [ -f "bilder/$filename.jpg" ]; then
-        echo "  -> ⏭️ Skipping $filename.png (optimized JPG already exists)"
+    # Skip if JPG already exists AND is newer than the PNG
+    if [ -f "bilder/$filename.jpg" ] && [ "bilder/$filename.jpg" -nt "$f" ]; then
+        echo "  -> ⏭️ Skipping $filename.png (optimized JPG is already up to date)"
         continue
     fi
     
