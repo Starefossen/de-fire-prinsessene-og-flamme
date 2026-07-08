@@ -151,6 +151,7 @@ if style_tag:
     align-items: center;
     width: 100%;
     pointer-events: auto;
+    position: relative;
   }
   
   
@@ -654,7 +655,7 @@ if style_tag:
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 1.5rem 2rem;
+    padding: 0.7rem 2rem;
   }
   
   .persistent-chapter {
@@ -667,6 +668,9 @@ if style_tag:
     opacity: 0;
     transition: opacity 0.4s ease;
     text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
   }
   
   .persistent-page {
