@@ -22,6 +22,13 @@ if head:
         head.append(soup.new_tag('meta', attrs={'name': 'theme-color', 'content': '#111827'}))
         head.append(soup.new_tag('link', rel='apple-touch-icon', href='bilder/forside.png'))
 
+    # Ensure viewport disables zooming for tactile feel
+    viewport = soup.find('meta', attrs={'name': 'viewport'})
+    if viewport:
+        viewport['content'] = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'
+    else:
+        head.append(soup.new_tag('meta', attrs={'name': 'viewport', 'content': 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'}))
+
     # Add Outfit font
     font_link = soup.new_tag('link', rel='stylesheet', href='https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap')
     head.append(font_link)
@@ -161,6 +168,12 @@ if style_tag:
     display: block;
     margin-left: auto;
     margin-right: auto;
+    cursor: zoom-in;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  
+  .page-content img:hover, .page-content figure:hover img {
+    transform: scale(1.02);
   }
 
   /* COVER PAGE OVERRIDES */
@@ -351,6 +364,38 @@ if style_tag:
     background: var(--rosa);
     box-shadow: 0 0 15px var(--rosa);
     transform: scale(1.05);
+  }
+  
+  /* Lightbox Animation */
+  .lightbox {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(22, 27, 56, 0.9);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    cursor: zoom-out;
+  }
+  .lightbox.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .lightbox img {
+    max-width: 95vw;
+    max-height: 95vh;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .lightbox.active img {
+    transform: scale(1);
   }
   
   /* Persistent Overlay Header/Footer */
@@ -637,6 +682,24 @@ if body:
                 const current = Array.from(pages).findIndex(p => p.getBoundingClientRect().left >= -10 && p.getBoundingClientRect().left < window.innerWidth - 10);
                 if (current > 0) pages[current - 1].scrollIntoView({ behavior: 'smooth' });
             }
+        });
+        
+        // Lightbox Animation Logic
+        const lightbox = document.createElement('div');
+        lightbox.className = 'lightbox';
+        const lbImg = document.createElement('img');
+        lightbox.appendChild(lbImg);
+        document.body.appendChild(lightbox);
+
+        document.querySelectorAll('.page-content img').forEach(img => {
+          img.addEventListener('click', () => {
+            lbImg.src = img.src;
+            lightbox.classList.add('active');
+          });
+        });
+
+        lightbox.addEventListener('click', () => {
+          lightbox.classList.remove('active');
         });
         
         // Read Again Button
