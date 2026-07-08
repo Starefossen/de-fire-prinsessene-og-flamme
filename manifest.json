@@ -1,0 +1,16 @@
+{
+  "name": "De fire prinsessene og Flamme",
+  "short_name": "Prinsessene",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#111827",
+  "theme_color": "#ffcfe6",
+  "icons": [
+    {
+      "src": "bilder/forside.jpg",
+      "sizes": "1024x1024",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}
