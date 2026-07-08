@@ -116,11 +116,20 @@ if style_tag:
   }
   
   
+  
+  .controls-group {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
   .action-btn {
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: white;
-    padding: 0.5rem 0.8rem;
+    width: 44px;
+    height: 44px;
+    padding: 0;
     border-radius: 8px;
     font-size: 1.1rem;
     cursor: pointer;
@@ -729,21 +738,25 @@ if body:
     header_row.append(soup.new_tag('div', attrs={'class': 'persistent-chapter', 'id': 'persistent-chapter'}))
     
     
+    # Group the controls
+    controls_group = soup.new_tag('div', attrs={'class': 'controls-group'})
+    
     # Font size down
     font_down_btn = soup.new_tag('button', attrs={'id': 'font-down-btn', 'class': 'action-btn'})
     font_down_btn.string = "A-"
-    header_row.append(font_down_btn)
+    controls_group.append(font_down_btn)
     
     # Font size up
     font_up_btn = soup.new_tag('button', attrs={'id': 'font-up-btn', 'class': 'action-btn'})
     font_up_btn.string = "A+"
-    header_row.append(font_up_btn)
+    controls_group.append(font_up_btn)
 
     # Overview button (SVG icon)
     overview_btn = soup.new_tag('button', attrs={'id': 'overview-btn', 'class': 'action-btn overview-btn'})
-    # Safari overview squares icon
     overview_btn.append(bs4.BeautifulSoup('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>', 'html.parser'))
-    header_row.append(overview_btn)
+    controls_group.append(overview_btn)
+    
+    header_row.append(controls_group)
 
     
     overlay.append(header_row)
