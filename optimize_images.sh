@@ -18,14 +18,17 @@ for f in bilder/*.png; do
     # Extract filename without extension
     filename=$(basename "$f" .png)
     
-    echo "  -> Optimizing $filename.png..."
+    # Skip if JPG already exists
+    if [ -f "bilder/$filename.jpg" ]; then
+        echo "  -> ⏭️ Skipping $filename.png (optimized JPG already exists)"
+        continue
+    fi
+    
+    echo "  -> 🗜️ Optimizing $filename.png..."
     
     # Use macOS built-in sips tool to resize (max width 1600px) and compress (75% quality JPEG)
     sips -Z 1600 -s format jpeg -s formatOptions 75 "$f" --out "bilder/$filename.jpg" > /dev/null 2>&1
-    
-    # Delete original PNG to save space
-    rm "$f"
 done
 
-echo "✅ All images optimized successfully!"
+echo "✅ All new images optimized successfully!"
 echo "   (You can now run 'python3 convert_book.py' to update the offline PWA cache with the new images)"
