@@ -161,6 +161,19 @@ if style_tag:
     gap: 0.6rem;
     align-items: center;
   }
+  
+  .btn-group {
+    display: flex;
+  }
+  .btn-group .action-btn:first-child {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: none;
+  }
+  .btn-group .action-btn:last-child {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
 
   .action-btn {
     background: rgba(255, 255, 255, 0.1);
@@ -817,20 +830,25 @@ if body:
     # Group the controls
     controls_group = soup.new_tag('div', attrs={'class': 'controls-group'})
     
-    # Font size down
-    font_down_btn = soup.new_tag('button', attrs={'id': 'font-down-btn', 'class': 'action-btn'})
-    font_down_btn.string = "A-"
-    controls_group.append(font_down_btn)
-    
-    # Font size up
-    font_up_btn = soup.new_tag('button', attrs={'id': 'font-up-btn', 'class': 'action-btn'})
-    font_up_btn.string = "A+"
-    controls_group.append(font_up_btn)
-
     # Overview button (SVG icon)
     overview_btn = soup.new_tag('button', attrs={'id': 'overview-btn', 'class': 'action-btn'})
     overview_btn.append(bs4.BeautifulSoup('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>', 'html.parser'))
     controls_group.append(overview_btn)
+    
+    # Button group for font sizes
+    btn_group = soup.new_tag('div', attrs={'class': 'btn-group'})
+    
+    # Font size down
+    font_down_btn = soup.new_tag('button', attrs={'id': 'font-down-btn', 'class': 'action-btn'})
+    font_down_btn.string = "A-"
+    btn_group.append(font_down_btn)
+    
+    # Font size up
+    font_up_btn = soup.new_tag('button', attrs={'id': 'font-up-btn', 'class': 'action-btn'})
+    font_up_btn.string = "A+"
+    btn_group.append(font_up_btn)
+    
+    controls_group.append(btn_group)
     
     header_row.append(controls_group)
 
