@@ -747,9 +747,13 @@
         
         // Handle deep link on load
         if (window.location.hash) {
-            const targetPage = document.querySelector(window.location.hash);
-            if (targetPage) {
-                setTimeout(() => targetPage.scrollIntoView(), 100);
+            try {
+                const targetPage = document.getElementById(window.location.hash.substring(1));
+                if (targetPage) {
+                    setTimeout(() => targetPage.scrollIntoView(), 100);
+                }
+            } catch (e) {
+                console.error('Invalid hash:', e);
             }
         }
         
