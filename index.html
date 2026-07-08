@@ -730,17 +730,19 @@
         // Keyboard Navigation (Arrow keys)
         let isScrolling = false;
         document.addEventListener('keydown', (e) => {
-            if (isScrolling) return;
             if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+                e.preventDefault(); // Stop native browser scroll
+                if (isScrolling) return;
+                
                 const current = Array.from(pages).findIndex(p => p.getBoundingClientRect().left >= -10 && p.getBoundingClientRect().left < window.innerWidth - 10);
                 if (e.key === 'ArrowRight' && current >= 0 && current < pages.length - 1) {
                     isScrolling = true;
                     pages[current + 1].scrollIntoView({ behavior: 'smooth' });
-                    setTimeout(() => isScrolling = false, 500);
+                    setTimeout(() => isScrolling = false, 600);
                 } else if (e.key === 'ArrowLeft' && current > 0) {
                     isScrolling = true;
                     pages[current - 1].scrollIntoView({ behavior: 'smooth' });
-                    setTimeout(() => isScrolling = false, 500);
+                    setTimeout(() => isScrolling = false, 600);
                 }
             }
         });
