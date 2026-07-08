@@ -182,6 +182,20 @@ if style_tag:
     font-size: calc(1em * var(--font-scale, 1));
   }
 
+  
+  .portrait {
+    float: left;
+    clear: left;
+    width: 140px;
+    margin: 0 1.5rem 1rem 0 !important;
+    display: block !important;
+  }
+  .portrait img {
+    border-radius: 16px !important;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+  }
+
   /* ---------- BOK-LAYOUT (Scroll Snapping) ---------- */
   body {
     overflow: hidden;
