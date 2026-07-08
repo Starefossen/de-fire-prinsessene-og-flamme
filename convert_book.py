@@ -131,6 +131,21 @@ if style_tag:
     transform: scale(1.05);
   }
 
+  
+  p {
+    orphans: 3;
+    widows: 3;
+    margin-bottom: 1.2rem;
+  }
+  
+  h2, h3 {
+    break-after: avoid-column;
+  }
+  
+  figure {
+    break-inside: avoid-column;
+  }
+
   /* ---------- BOK-LAYOUT (Scroll Snapping) ---------- */
   body {
     overflow: hidden;
@@ -194,7 +209,7 @@ if style_tag:
     
     /* Flow */
     column-count: auto; /* Disable columns on mobile to allow vertical scroll */
-    column-fill: auto;
+    column-fill: balance;
     column-gap: 3rem;
     overflow-y: auto;
     overflow-x: hidden;
