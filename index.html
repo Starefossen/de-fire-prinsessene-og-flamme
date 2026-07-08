@@ -282,10 +282,14 @@
     align-items: flex-start;
     margin-bottom: 1.5rem;
     break-inside: avoid;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
   }
   
   .portrait {
     flex: 0 0 140px;
+    min-width: 140px; /* Force minimum width to prevent WebKit flex collapse */
     margin: 0 !important;
     border-radius: 20px;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
@@ -428,6 +432,9 @@
     margin-left: auto;
     margin-right: auto;
     cursor: zoom-in;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
   }
   /* FIGURE STYLING — MUST stay inline-block to prevent WebKit multicol vanishing */
   .page-content figure {
