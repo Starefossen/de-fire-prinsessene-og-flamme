@@ -46,6 +46,12 @@ style_tag = soup.find('style')
 if style_tag:
     css_additions = """
   
+
+  /* GLOBAL IMAGE SAFEGUARD */
+  .page-content img {
+    max-height: calc(100svh - 12rem);
+    object-fit: contain;
+  }
   /* OVERVIEW MODE */
   .book-track.overview-mode {
     display: flex;
@@ -347,6 +353,46 @@ if style_tag:
     max-height: calc(100svh - 14rem) !important;
     object-fit: contain;
     margin: 0;
+  }
+  /* COVER PAGE OVERRIDES (STABLE FLEXBOX) */
+  .page.cover .page-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    column-count: auto; /* Disable columns */
+  }
+  .page.cover .cover-text {
+    flex: 1;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  @media (min-width: 900px) {
+    .page.cover .page-content {
+      flex-direction: row;
+      text-align: left;
+      justify-content: space-between;
+      gap: 4rem;
+    }
+    .page.cover .cover-text {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    .page.cover figure.forside {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      break-before: auto !important;
+      page-break-before: auto !important;
+      -webkit-column-break-before: auto !important;
+    }
+    .page.cover figure.forside img {
+      max-height: 65vh !important;
+    }
   }
   /* COVER PAGE TYPOGRAPHY */
   .page.cover .cover-text {
