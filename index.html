@@ -414,6 +414,51 @@
   .page-content img:hover, .page-content figure:hover img {
     transform: scale(1.02);
   }
+  /* COVER PAGE TYPOGRAPHY */
+  .page.cover .cover-text {
+    margin-bottom: 1.5rem;
+  }
+  .page.cover h1 {
+    font-size: 2.2rem;
+    line-height: 1.1;
+    margin-bottom: 0.8rem;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  }
+  .page.cover p {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+  }
+  .page.cover p.under {
+    margin-bottom: 1.5rem;
+  }
+  .page.cover figure {
+    margin: 0;
+  }
+  .page.cover figure img {
+    max-height: 40vh;
+    max-width: 100%;
+    object-fit: contain;
+  }
+  .page.cover .slott {
+    margin-top: 2rem;
+    width: 100%;
+    max-height: 15vh;
+    opacity: 0.7;
+  }
+  @media (min-width: 900px) {
+    .page.cover h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .page.cover p {
+      font-size: 1.2rem;
+    }
+    .page.cover figure img {
+      max-height: 65vh;
+    }
+  }
+
   /* TOC PAGE OVERRIDES */
   .page.toc-page .page-content {
     display: flex;
