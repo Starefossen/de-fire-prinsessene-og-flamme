@@ -210,7 +210,6 @@ if style_tag:
     -webkit-column-break-inside: avoid;
     display: inline-block; /* Fixes multicol image vanishing bugs */
     width: 100%;
-    transform: translateZ(0); /* Hardware acceleration to prevent vanishing */
   }
 
 
@@ -221,15 +220,14 @@ if style_tag:
 
   
   .person-wrapper {
-    display: flex;
+    display: inline-flex;
+    width: 100%;
     flex-direction: row;
     gap: 1.5rem;
     align-items: flex-start;
     margin-bottom: 1.5rem;
     break-inside: avoid;
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
-    backface-visibility: hidden;
+    page-break-inside: avoid;
   }
   
   .portrait {
@@ -377,9 +375,6 @@ if style_tag:
     margin-left: auto;
     margin-right: auto;
     cursor: zoom-in;
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
-    backface-visibility: hidden;
   }
   /* FIGURE STYLING — MUST stay inline-block to prevent WebKit multicol vanishing */
   .page-content figure {
