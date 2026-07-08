@@ -48,71 +48,67 @@ if style_tag:
   /* ---------- BOK-LAYOUT (Scroll Snapping) ---------- */
   body {
     overflow: hidden;
-    position: relative;
-    line-height: 1.6;
-    letter-spacing: 0.02em;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    -webkit-hyphens: auto;
-    hyphens: auto;
-  }
-  p {
-    margin-bottom: 1.2em;
-  }
-  .book-track {
-    display: flex;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    height: 100svh;
-    width: 100vw;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-  .book-track::-webkit-scrollbar {
-    display: none;
   }
   
-  .page {
-    flex: 0 0 100vw;
-    height: 100svh;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    position: relative;
-    box-sizing: border-box;
-  }
-
-  /* Universal Spread Layout for Chapters */
-  .page-content {
-    display: block;
-    width: 100%;
-    max-width: 1400px;
-    height: calc(100svh - 6rem);
-    margin: 0 auto;
+  .book-container {
+    height: 100vh;
+    width: 100vw;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
     
-    /* Glassmorphism book spread */
+    /* Dynamic Multi-Column Pagination */
+    padding: 3rem 2rem;
+    box-sizing: border-box;
+    column-width: calc(100vw - 4rem);
+    column-gap: 4rem;
+  }
+  
+  /* Glassmorphism applied as a fixed overlay behind the text */
+  .book-container::before {
+    content: '';
+    position: fixed;
+    top: 2rem; bottom: 2rem;
+    left: 1rem; right: 1rem;
     background: rgba(29, 35, 70, 0.45);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-radius: 28px;
     border: 1px solid rgba(255, 207, 230, 0.08);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    
-    padding: 1.5rem 1.2rem;
-    box-sizing: border-box;
-    
-    /* Flow */
-    column-count: auto; /* Disable columns on mobile to allow vertical scroll */
-    column-fill: auto;
-    column-gap: 3rem;
-    overflow-y: auto;
-    overflow-x: hidden;
-    scrollbar-width: none;
+    z-index: -1;
+    pointer-events: none;
+  }
+  
+  .chapter-content {
+    /* Each chapter starts on a new column */
+    break-before: column;
+    height: 100%;
+    position: relative;
+    font-size: 1.15rem;
+    line-height: 1.8;
+  }
+  
+  .chapter-content h2, .chapter-content h3 {
+    break-after: avoid;
+  }
+  .chapter-content figure, .chapter-content img {
+    break-inside: avoid;
+  }
+  
+  @media (min-width: 900px) {
+    .book-container {
+      padding: 5rem 4rem;
+      column-width: calc(50vw - 4rem - 2rem); /* 2 pages per screen on desktop */
+      column-gap: 4rem;
+    }
+    .book-container::before {
+      top: 3rem; bottom: 3rem;
+      left: 2rem; right: 2rem;
+    }
+    .chapter-content {
+      font-size: 1.25rem;
+    }
   }
   
   .chapter {
@@ -131,14 +127,14 @@ if style_tag:
       padding: 4rem 0; /* Space for persistent headers */
       box-sizing: border-box;
     }
-    .page {
+    .chapter-content {
       flex: none;
       height: auto;
       width: 100vw;
       scroll-snap-align: none;
       padding: 1rem 1.5rem;
     }
-    .page-content {
+    .chapter-content {
       height: auto;
       overflow-y: visible;
       padding: 2rem 1.5rem;
@@ -150,23 +146,23 @@ if style_tag:
     }
   }
 
-  .page-content::-webkit-scrollbar { display: none; }
+  .chapter-content::-webkit-scrollbar { display: none; }
 
   @media (min-width: 900px) {
-    .page-content {
+    .chapter-content {
       padding: 4rem 5rem;
       column-count: 2;
       column-gap: 6rem;
     }
   }
 
-  .page-content > * {
+  .chapter-content > * {
     break-inside: avoid;
     page-break-inside: avoid;
     margin-bottom: 1.5rem;
   }
   
-  .page-content img, .page-content figure {
+  .chapter-content img, .chapter-content figure {
     max-width: 100%;
     height: auto;
     max-height: 55vh;
@@ -180,12 +176,12 @@ if style_tag:
     transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   
-  .page-content img:hover, .page-content figure:hover img {
+  .chapter-content img:hover, .chapter-content figure:hover img {
     transform: scale(1.02);
   }
 
   /* COVER PAGE OVERRIDES */
-  .page.cover .page-content {
+  .chapter-content.cover .chapter-content {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -193,71 +189,71 @@ if style_tag:
     text-align: center;
     column-count: auto; /* Disable columns */
   }
-  .page.cover .cover-text {
+  .chapter-content.cover .cover-text {
     margin-bottom: 1.5rem;
   }
-  .page.cover h1 {
+  .chapter-content.cover h1 {
     font-size: 2.2rem;
     line-height: 1.1;
     margin-bottom: 0.8rem;
     text-shadow: 0 4px 15px rgba(0,0,0,0.5);
   }
-  .page.cover p {
+  .chapter-content.cover p {
     font-size: 1rem;
     opacity: 0.9;
     margin-bottom: 0;
   }
-  .page.cover figure {
+  .chapter-content.cover figure {
     margin: 0;
   }
-  .page.cover figure img {
+  .chapter-content.cover figure img {
     max-height: 40vh;
   }
   @media (min-width: 900px) {
-    .page.cover .page-content {
+    .chapter-content.cover .chapter-content {
       flex-direction: row;
       text-align: left;
       justify-content: space-between;
     }
-    .page.cover .cover-text {
+    .chapter-content.cover .cover-text {
       flex: 1;
       padding-right: 3rem;
       margin-bottom: 0;
     }
-    .page.cover h1 {
+    .chapter-content.cover h1 {
       font-size: 3.5rem;
       margin-bottom: 1.5rem;
     }
-    .page.cover p {
+    .chapter-content.cover p {
       font-size: 1.2rem;
     }
-    .page.cover figure {
+    .chapter-content.cover figure {
       flex: 1;
       display: flex;
       justify-content: center;
       align-items: center;
     }
-    .page.cover figure img {
+    .chapter-content.cover figure img {
       max-height: 65vh;
     }
   }
 
   /* TOC PAGE OVERRIDES */
-  .page.toc-page .page-content {
+  .chapter-content.toc-page .chapter-content {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     column-count: auto; /* Disable container columns */
   }
-  .page.toc-page h2 {
+  .chapter-content.toc-page h2 {
     font-size: 2.2rem;
     margin-bottom: 2rem;
     color: var(--rosa);
     text-align: center;
     text-shadow: 0 2px 10px rgba(0,0,0,0.4);
   }
-  .page.toc-page ol {
+  .chapter-content.toc-page ol {
     width: 100%;
     max-width: 900px;
     column-count: 1;
@@ -267,12 +263,12 @@ if style_tag:
     margin: 0;
     counter-reset: toc-counter;
   }
-  .page.toc-page li {
+  .chapter-content.toc-page li {
     margin-bottom: 1.2rem;
     break-inside: avoid;
     counter-increment: toc-counter;
   }
-  .page.toc-page a {
+  .chapter-content.toc-page a {
     color: #fff;
     text-decoration: none;
     font-size: 1rem;
@@ -282,12 +278,12 @@ if style_tag:
     transition: color 0.3s ease, transform 0.3s ease;
     opacity: 0.9;
   }
-  .page.toc-page a:hover {
+  .chapter-content.toc-page a:hover {
     color: var(--gull);
     transform: translateX(10px);
     opacity: 1;
   }
-  .page.toc-page a::before {
+  .chapter-content.toc-page a::before {
     content: counter(toc-counter) ".";
     color: var(--rosa);
     font-weight: 700;
@@ -296,21 +292,21 @@ if style_tag:
     min-width: 1.2rem;
   }
   @media (min-width: 900px) {
-    .page.toc-page h2 {
+    .chapter-content.toc-page h2 {
       font-size: 3rem;
       margin-bottom: 4rem;
     }
-    .page.toc-page ol {
+    .chapter-content.toc-page ol {
       column-count: 2;
       column-gap: 5rem;
     }
-    .page.toc-page li {
+    .chapter-content.toc-page li {
       margin-bottom: 1.8rem;
     }
-    .page.toc-page a {
+    .chapter-content.toc-page a {
       font-size: 1.2rem;
     }
-    .page.toc-page a::before {
+    .chapter-content.toc-page a::before {
       font-size: 1.2rem;
       margin-right: 1.5rem;
       min-width: 1.5rem;
@@ -499,71 +495,20 @@ if main_tag:
         elif h2:
             chapter_title = h2.text.strip()
 
-        # Extract elements and calculate lengths
-        all_elements = []
-        num_figures = 0
+        # Dynamic CSS Multi-Column Layout! No Python chunking!
+        safe_chapter = chapter_title.replace(' ', '-').replace('·', '').replace('—', '-').lower()
+        import re
+        safe_chapter = re.sub(r'-+', '-', safe_chapter).strip('-')
+        
+        chap = soup.new_tag('article', attrs={'class': 'chapter-content', 'data-chapter': chapter_title, 'id': f"chapter-{safe_chapter}"})
+        
+        # Add all elements directly into the chapter container
         for child in list(article.children):
             if isinstance(child, bs4.NavigableString) and child.strip() == '':
                 continue
-            if child.name == 'figure':
-                num_figures += 1
-            all_elements.append(child)
-            
-        def get_len(el):
-            if el.name == 'figure':
-                return 400
-            return len(el.text)
-
-        total_len = sum(get_len(el) for el in all_elements)
-        
-        MAX_CHARS = 1400
-        chunks = []
-        current_chunk = []
-        current_len = 0
-        
-        for j, el in enumerate(all_elements):
-            current_chunk.append(el)
-            current_len += get_len(el)
-            
-            next_el = all_elements[j+1] if j+1 < len(all_elements) else None
-            is_next_heading = next_el and next_el.name in ['h2', 'h3']
-            
-            if is_next_heading and current_len >= MAX_CHARS * 0.4:
-                chunks.append(current_chunk)
-                current_chunk = []
-                current_len = 0
-                continue
-                
-            if current_len >= MAX_CHARS:
-                if el.name in ['h2', 'h3'] or (el.name == 'p' and 'kap-nr' in el.get('class', [])):
-                    continue
-                chunks.append(current_chunk)
-                current_chunk = []
-                current_len = 0
-                
-        if current_chunk:
-            chunks.append(current_chunk)
-            
-        chap = soup.new_tag('article', attrs={'class': 'chapter'})
-        for i in range(len(chunks)):
-            # Give each page an ID to allow deep linking
-            safe_chapter = chapter_title.replace(' ', '-').replace('·', '').replace('—', '-').lower()
-            import re
-            safe_chapter = re.sub(r'-+', '-', safe_chapter).strip('-')
-            page_id = f"page-{safe_chapter}-{i+1}"
-            
-            page = soup.new_tag('section', attrs={'class': 'page', 'data-chapter': chapter_title, 'id': page_id})
-            content = soup.new_tag('div', attrs={'class': 'page-content'})
-            
-            chunk = chunks[i]
-            for el in chunk:
-                content.append(el)
-            
-            page.append(content)
-            chap.append(page)
+            chap.append(child)
             
         new_children.append(chap)
-            
         article.extract()
 
     # Process footer
@@ -606,66 +551,18 @@ if body:
             navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
           });
         }
-        
-        const pages = document.querySelectorAll('.page');
-        const bookTrack = document.getElementById('book-track');
+        const container = document.querySelector('.book-container');
         const persistentChapter = document.getElementById('persistent-chapter');
-        const persistentPage = document.getElementById('persistent-page');
         
-        pages.forEach((page, index) => {
-          if (index > 0) {
-            const leftZone = document.createElement('div');
-            leftZone.className = 'nav-zone left';
-            leftZone.innerHTML = '&#10094;';
-            leftZone.addEventListener('click', () => {
-              pages[index - 1].scrollIntoView({ behavior: 'smooth' });
-            });
-            page.appendChild(leftZone);
-          }
-
-          if (index < pages.length - 1) {
-            const rightZone = document.createElement('div');
-            rightZone.className = 'nav-zone right';
-            rightZone.innerHTML = '&#10095;';
-            rightZone.addEventListener('click', () => {
-              pages[index + 1].scrollIntoView({ behavior: 'smooth' });
-            });
-            page.appendChild(rightZone);
-          }
-        });
-        
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
-              if (entry.target.id) {
-                history.replaceState(null, null, '#' + entry.target.id);
-              }
-              const index = Array.from(pages).indexOf(entry.target);
-              persistentPage.textContent = `Side ${index + 1} av ${pages.length}`;
-              
-              const chapterTitle = entry.target.getAttribute('data-chapter');
-              if (chapterTitle) {
-                persistentChapter.textContent = chapterTitle;
-                persistentChapter.style.opacity = '1';
-              } else {
-                persistentChapter.style.opacity = '0';
-              }
-            }
-          });
-        }, {
-          threshold: 0.5
-        });
-
-        pages.forEach(page => observer.observe(page));
-        
+        // TOC Links
         document.querySelectorAll('.toc-page a').forEach(a => {
             a.addEventListener('click', (e) => {
                 e.preventDefault();
                 const targetText = a.textContent.trim();
-                const h2s = document.querySelectorAll('.page h2');
+                const h2s = document.querySelectorAll('.chapter-content h2');
                 for (let h2 of h2s) {
                     if (h2.textContent.includes(targetText)) {
-                        h2.closest('.page').scrollIntoView({ behavior: 'smooth' });
+                        h2.closest('.chapter-content').scrollIntoView({ behavior: 'smooth' });
                         break;
                     }
                 }
@@ -676,20 +573,40 @@ if body:
         let isScrolling = false;
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+                // If we are on mobile (vertical), let browser do its thing
+                if (window.innerWidth < 900) return;
+                
                 e.preventDefault(); // Stop native browser scroll
                 if (isScrolling) return;
                 
-                const current = Array.from(pages).findIndex(p => p.getBoundingClientRect().left >= -10 && p.getBoundingClientRect().left < window.innerWidth - 10);
-                if (e.key === 'ArrowRight' && current >= 0 && current < pages.length - 1) {
-                    isScrolling = true;
-                    pages[current + 1].scrollIntoView({ behavior: 'smooth' });
-                    setTimeout(() => isScrolling = false, 600);
+                const pageWidth = window.innerWidth;
+                const currentPos = container.scrollLeft;
+                const current = Math.round(currentPos / pageWidth);
+                
+                isScrolling = true;
+                if (e.key === 'ArrowRight') {
+                    container.scrollTo({ left: (current + 1) * pageWidth, behavior: 'smooth' });
                 } else if (e.key === 'ArrowLeft' && current > 0) {
-                    isScrolling = true;
-                    pages[current - 1].scrollIntoView({ behavior: 'smooth' });
-                    setTimeout(() => isScrolling = false, 600);
+                    container.scrollTo({ left: (current - 1) * pageWidth, behavior: 'smooth' });
                 }
+                setTimeout(() => isScrolling = false, 500);
             }
+        });
+        
+        // Dynamic Snap polyfill for horizontal desktop scrolling
+        let scrollTimeout;
+        container.addEventListener('scroll', () => {
+            if (window.innerWidth < 900) return; // Vertical on mobile
+            
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                const scrollPos = container.scrollLeft;
+                const pageWidth = window.innerWidth;
+                const target = Math.round(scrollPos / pageWidth) * pageWidth;
+                if (Math.abs(scrollPos - target) > 5) {
+                    container.scrollTo({ left: target, behavior: 'smooth' });
+                }
+            }, 150);
         });
         
         // Handle deep link on load
@@ -712,7 +629,7 @@ if body:
         document.body.appendChild(lightbox);
 
         document.body.addEventListener('click', (e) => {
-          const img = e.target.closest('.page-content img, .page-content figure img');
+          const img = e.target.closest('.chapter-content img, .chapter-content figure img');
           if (img) {
             e.preventDefault();
             e.stopPropagation();
