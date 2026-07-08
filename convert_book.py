@@ -49,7 +49,7 @@ if style_tag:
 
   /* GLOBAL IMAGE SAFEGUARD */
   .page-content img {
-    max-height: calc(100svh - 12rem);
+    max-height: calc(100svh - 22rem);
     object-fit: contain;
   }
   /* OVERVIEW MODE */
