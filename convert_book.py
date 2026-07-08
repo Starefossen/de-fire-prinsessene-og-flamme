@@ -53,7 +53,7 @@ if style_tag:
     text-align: center;
   }
   #prolog figure[data-fil="bilder/persongalleri"] img {
-    max-height: 28vh !important;
+    max-height: 25vh !important;
     width: auto;
     margin: 0 auto;
   }
