@@ -52,6 +52,12 @@ if style_tag:
     width: auto;
     margin: 0 auto;
   }
+  
+  /* ANDRE VENNER: constrain height */
+  .illu.andre-venner img {
+    max-height: 40vh !important;
+    margin-top: 1rem;
+  }
   /* OVERVIEW MODE */
   .book-track.overview-mode {
     display: flex;
@@ -205,7 +211,6 @@ if style_tag:
   body {
     overflow: hidden;
     position: relative;
-    line-height: 1.5;
     letter-spacing: 0.02em;
     overflow-wrap: break-word;
     word-wrap: break-word;
@@ -248,7 +253,7 @@ if style_tag:
     display: block;
     width: 100%;
     max-width: 1400px;
-    max-height: calc(100svh - 4rem);
+    height: calc(100svh - 4rem);
     margin: 0 auto;
     
     /* Glassmorphism book spread */
@@ -264,7 +269,7 @@ if style_tag:
     
     /* Flow */
     column-count: auto; /* Disable columns on mobile to allow vertical scroll */
-    column-fill: auto;
+    column-fill: balance;
     column-gap: 3rem;
     overflow-y: auto;
     overflow-x: hidden;
@@ -333,7 +338,6 @@ if style_tag:
     margin-left: auto;
     margin-right: auto;
     cursor: zoom-in;
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   /* FIGURE STYLING — MUST stay inline-block to prevent WebKit multicol vanishing */
   .page-content figure {
@@ -342,17 +346,11 @@ if style_tag:
     cursor: zoom-in;
   }
   
-  .page-content img:hover, .page-content figure:hover img {
-    transform: scale(1.02);
-  }
   /* COVER PAGE IMAGE FIX */
   .page.cover figure.forside {
     width: 100% !important;
     max-width: 100%;
     margin: 0 !important;
-    break-before: column; /* Force it to the top of the right column */
-    -webkit-column-break-before: always;
-    page-break-before: always;
   }
   .page.cover figure.forside img {
     width: 100%;
@@ -392,9 +390,6 @@ if style_tag:
       display: flex;
       justify-content: center;
       align-items: center;
-      break-before: auto !important;
-      page-break-before: auto !important;
-      -webkit-column-break-before: auto !important;
     }
     .page.cover figure.forside img {
       max-height: 65vh !important;
