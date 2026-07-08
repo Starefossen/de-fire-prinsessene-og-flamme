@@ -644,6 +644,44 @@ if style_tag:
     opacity: 1;
     pointer-events: all;
   }
+  
+  /* Slutt Page (Final page) overlay */
+  .slutt-bg {
+    position: absolute !important;
+    inset: 0;
+    margin: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    z-index: 1;
+  }
+  .slutt-bg img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    border-radius: 0 !important;
+  }
+  .slutt-overlay {
+    position: relative;
+    z-index: 2;
+    background: rgba(29, 35, 70, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 3rem;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255, 207, 230, 0.15);
+    max-width: 600px;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  .slutt-overlay p {
+    margin: 0;
+  }
+  
   .lightbox img {
     max-width: 95vw;
     max-height: 95vh;
@@ -800,15 +838,22 @@ if main_tag:
     if footer:
         chap = soup.new_tag('article', attrs={'class': 'chapter'})
         page = soup.new_tag('section', attrs={'class': 'page'})
-        content = soup.new_tag('div', attrs={'class': 'page-content', 'style': 'display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;'})
+        content = soup.new_tag('div', attrs={'class': 'page-content', 'style': 'display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0; position: relative; overflow: hidden;'})
+        
+        overlay = soup.new_tag('div', attrs={'class': 'slutt-overlay'})
         
         for child in list(footer.children):
-            content.append(child)
+            if child.name == 'figure':
+                child['class'] = child.get('class', []) + ['slutt-bg']
+                content.append(child)
+            else:
+                overlay.append(child)
             
-        btn = soup.new_tag('a', attrs={'href': '#', 'class': 'read-again-btn'})
+        btn = soup.new_tag('a', attrs={'href': '#', 'class': 'read-again-btn', 'style': 'margin-top: 1rem;'})
         btn.string = "Les boken igjen"
-        content.append(btn)
+        overlay.append(btn)
         
+        content.append(overlay)
         page.append(content)
         chap.append(page)
         new_children.append(chap)
