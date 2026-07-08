@@ -115,12 +115,11 @@
     break-inside: avoid;
     -webkit-column-break-inside: avoid;
     page-break-inside: avoid;
-    display: inline-block;
+    display: block;
     width: 100%;
     aspect-ratio: 4 / 3;
     border-radius: 18px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.45);
-    overflow: hidden;
   }
   .illu img {
     width: 100% !important;
@@ -128,6 +127,7 @@
     display: block;
     object-fit: cover !important;
     max-height: none !important;
+    border-radius: 18px;
   }
   .illu-boks{
     border:2px dashed rgba(255,168,210,.45);border-radius:18px;
@@ -319,9 +319,9 @@
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
     background: #111827; /* Placeholder background */
     aspect-ratio: 1/1;
-    overflow: hidden;
   }
   .portrait img {
+    border-radius: 20px;
     height: 100%;
     width: 100%;
     object-fit: cover;

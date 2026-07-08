@@ -239,9 +239,9 @@ if style_tag:
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
     background: #111827; /* Placeholder background */
     aspect-ratio: 1/1;
-    overflow: hidden;
   }
   .portrait img {
+    border-radius: 20px;
     height: 100%;
     width: 100%;
     object-fit: cover;
