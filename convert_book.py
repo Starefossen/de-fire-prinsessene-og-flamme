@@ -45,26 +45,57 @@ if head:
 style_tag = soup.find('style')
 if style_tag:
     css_additions = """
-  /* ---------- BOK-LAYOUT ---------- */
+  /* ---------- BOK-LAYOUT (Scroll Snapping) ---------- */
   body {
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
+    position: relative;
+    line-height: 1.6;
+    letter-spacing: 0.02em;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -webkit-hyphens: auto;
+    hyphens: auto;
   }
-  
-  .book-container {
+  p {
+    margin-bottom: 1.2em;
+  }
+  .book-track {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem 1rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
+    height: 100svh;
+    width: 100vw;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .book-track::-webkit-scrollbar {
+    display: none;
   }
   
-  .chapter-content {
+  .page {
+    flex: 0 0 100vw;
+    height: 100svh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+    box-sizing: border-box;
+  }
+
+  /* Universal Spread Layout for Chapters */
+  .page-content {
+    display: block;
     width: 100%;
-    max-width: 850px;
-    margin: 0 auto 4rem auto;
+    max-width: 1400px;
+    height: calc(100svh - 6rem);
+    margin: 0 auto;
     
-    /* Glassmorphism applied to each chapter */
+    /* Glassmorphism book spread */
     background: rgba(29, 35, 70, 0.45);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
@@ -72,42 +103,89 @@ if style_tag:
     border: 1px solid rgba(255, 207, 230, 0.08);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     
-    padding: 3rem 2rem;
-    font-size: 1.15rem;
-    line-height: 1.8;
+    padding: 1.5rem 1.2rem;
     box-sizing: border-box;
-    position: relative;
+    
+    /* Flow */
+    column-count: auto; /* Disable columns on mobile to allow vertical scroll */
+    column-fill: auto;
+    column-gap: 3rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
   }
   
+  .chapter {
+    display: contents;
+  }
+
+  @media (max-width: 899px) {
+    .chapter {
+      display: block;
+      flex: 0 0 100vw;
+      height: 100svh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      padding: 4rem 0; /* Space for persistent headers */
+      box-sizing: border-box;
+    }
+    .page {
+      flex: none;
+      height: auto;
+      width: 100vw;
+      scroll-snap-align: none;
+      padding: 1rem 1.5rem;
+    }
+    .page-content {
+      height: auto;
+      overflow-y: visible;
+      padding: 2rem 1.5rem;
+      column-count: 1;
+      column-gap: 0;
+    }
+    .nav-zone {
+      display: none !important;
+    }
+  }
+
+  .page-content::-webkit-scrollbar { display: none; }
+
   @media (min-width: 900px) {
-    .book-container {
-      padding: 4rem 2rem;
-    }
-    .chapter-content {
-      padding: 5rem 6rem;
-      font-size: 1.25rem;
-      margin-bottom: 6rem;
+    .page-content {
+      padding: 4rem 5rem;
+      column-count: 2;
+      column-gap: 6rem;
     }
   }
+
+  .page-content > * {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 1.5rem;
+  }
   
-  .chapter-content img, .chapter-content figure {
+  .page-content img, .page-content figure {
     max-width: 100%;
     height: auto;
-    max-height: 65vh;
+    max-height: 55vh;
     object-fit: contain;
     border-radius: 12px;
-    margin: 2rem auto;
+    margin-bottom: 2rem;
     display: block;
+    margin-left: auto;
+    margin-right: auto;
     cursor: zoom-in;
     transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   
-  .chapter-content img:hover, .chapter-content figure:hover img {
+  .page-content img:hover, .page-content figure:hover img {
     transform: scale(1.02);
   }
 
   /* COVER PAGE OVERRIDES */
-  .chapter-content.cover .chapter-content {
+  .page.cover .page-content {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -115,71 +193,71 @@ if style_tag:
     text-align: center;
     column-count: auto; /* Disable columns */
   }
-  .chapter-content.cover .cover-text {
+  .page.cover .cover-text {
     margin-bottom: 1.5rem;
   }
-  .chapter-content.cover h1 {
+  .page.cover h1 {
     font-size: 2.2rem;
     line-height: 1.1;
     margin-bottom: 0.8rem;
     text-shadow: 0 4px 15px rgba(0,0,0,0.5);
   }
-  .chapter-content.cover p {
+  .page.cover p {
     font-size: 1rem;
     opacity: 0.9;
     margin-bottom: 0;
   }
-  .chapter-content.cover figure {
+  .page.cover figure {
     margin: 0;
   }
-  .chapter-content.cover figure img {
+  .page.cover figure img {
     max-height: 40vh;
   }
   @media (min-width: 900px) {
-    .chapter-content.cover .chapter-content {
+    .page.cover .page-content {
       flex-direction: row;
       text-align: left;
       justify-content: space-between;
     }
-    .chapter-content.cover .cover-text {
+    .page.cover .cover-text {
       flex: 1;
       padding-right: 3rem;
       margin-bottom: 0;
     }
-    .chapter-content.cover h1 {
+    .page.cover h1 {
       font-size: 3.5rem;
       margin-bottom: 1.5rem;
     }
-    .chapter-content.cover p {
+    .page.cover p {
       font-size: 1.2rem;
     }
-    .chapter-content.cover figure {
+    .page.cover figure {
       flex: 1;
       display: flex;
       justify-content: center;
       align-items: center;
     }
-    .chapter-content.cover figure img {
+    .page.cover figure img {
       max-height: 65vh;
     }
   }
 
   /* TOC PAGE OVERRIDES */
-  .chapter-content.toc-page .chapter-content {
+  .page.toc-page .page-content {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     column-count: auto; /* Disable container columns */
   }
-  .chapter-content.toc-page h2 {
+  .page.toc-page h2 {
     font-size: 2.2rem;
     margin-bottom: 2rem;
     color: var(--rosa);
     text-align: center;
     text-shadow: 0 2px 10px rgba(0,0,0,0.4);
   }
-  .chapter-content.toc-page ol {
+  .page.toc-page ol {
     width: 100%;
     max-width: 900px;
     column-count: 1;
@@ -189,12 +267,12 @@ if style_tag:
     margin: 0;
     counter-reset: toc-counter;
   }
-  .chapter-content.toc-page li {
+  .page.toc-page li {
     margin-bottom: 1.2rem;
     break-inside: avoid;
     counter-increment: toc-counter;
   }
-  .chapter-content.toc-page a {
+  .page.toc-page a {
     color: #fff;
     text-decoration: none;
     font-size: 1rem;
@@ -204,12 +282,12 @@ if style_tag:
     transition: color 0.3s ease, transform 0.3s ease;
     opacity: 0.9;
   }
-  .chapter-content.toc-page a:hover {
+  .page.toc-page a:hover {
     color: var(--gull);
     transform: translateX(10px);
     opacity: 1;
   }
-  .chapter-content.toc-page a::before {
+  .page.toc-page a::before {
     content: counter(toc-counter) ".";
     color: var(--rosa);
     font-weight: 700;
@@ -218,21 +296,21 @@ if style_tag:
     min-width: 1.2rem;
   }
   @media (min-width: 900px) {
-    .chapter-content.toc-page h2 {
+    .page.toc-page h2 {
       font-size: 3rem;
       margin-bottom: 4rem;
     }
-    .chapter-content.toc-page ol {
+    .page.toc-page ol {
       column-count: 2;
       column-gap: 5rem;
     }
-    .chapter-content.toc-page li {
+    .page.toc-page li {
       margin-bottom: 1.8rem;
     }
-    .chapter-content.toc-page a {
+    .page.toc-page a {
       font-size: 1.2rem;
     }
-    .chapter-content.toc-page a::before {
+    .page.toc-page a::before {
       font-size: 1.2rem;
       margin-right: 1.5rem;
       min-width: 1.5rem;
@@ -372,8 +450,8 @@ if style_tag:
 
 main_tag = soup.find('main')
 if main_tag:
-    main_tag['class'] = main_tag.get('class', []) + ['book-container']
-    main_tag['id'] = 'book-container'
+    main_tag['class'] = main_tag.get('class', []) + ['book-track']
+    main_tag['id'] = 'book-track'
 
     new_children = []
 
@@ -421,20 +499,47 @@ if main_tag:
         elif h2:
             chapter_title = h2.text.strip()
 
-        # Dynamic CSS Multi-Column Layout! No Python chunking!
-        safe_chapter = chapter_title.replace(' ', '-').replace('·', '').replace('—', '-').lower()
-        import re
-        safe_chapter = re.sub(r'-+', '-', safe_chapter).strip('-')
-        
-        chap = soup.new_tag('article', attrs={'class': 'chapter-content', 'data-chapter': chapter_title, 'id': f"chapter-{safe_chapter}"})
-        
-        # Add all elements directly into the chapter container
+        # Extract elements and chunk based on manual <hr class="pb"> tags
+        all_elements = []
         for child in list(article.children):
             if isinstance(child, bs4.NavigableString) and child.strip() == '':
                 continue
-            chap.append(child)
+            all_elements.append(child)
+            
+        chunks = []
+        current_chunk = []
+        
+        for el in all_elements:
+            if el.name == 'hr' and 'pb' in el.get('class', []):
+                if current_chunk:
+                    chunks.append(current_chunk)
+                    current_chunk = []
+                continue
+            current_chunk.append(el)
+            
+        if current_chunk:
+            chunks.append(current_chunk)
+            
+        chap = soup.new_tag('article', attrs={'class': 'chapter'})
+        for i in range(len(chunks)):
+            # Give each page an ID to allow deep linking
+            safe_chapter = chapter_title.replace(' ', '-').replace('·', '').replace('—', '-').lower()
+            import re
+            safe_chapter = re.sub(r'-+', '-', safe_chapter).strip('-')
+            page_id = f"page-{safe_chapter}-{i+1}"
+            
+            page = soup.new_tag('section', attrs={'class': 'page', 'data-chapter': chapter_title, 'id': page_id})
+            content = soup.new_tag('div', attrs={'class': 'page-content'})
+            
+            chunk = chunks[i]
+            for el in chunk:
+                content.append(el)
+            
+            page.append(content)
+            chap.append(page)
             
         new_children.append(chap)
+            
         article.extract()
 
     # Process footer
@@ -477,29 +582,92 @@ if body:
             navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
           });
         }
-        const container = document.querySelector('.book-container');
-        const persistentChapter = document.getElementById('persistent-chapter');
         
-        // TOC Links
+        const pages = document.querySelectorAll('.page');
+        const bookTrack = document.getElementById('book-track');
+        const persistentChapter = document.getElementById('persistent-chapter');
+        const persistentPage = document.getElementById('persistent-page');
+        
+        pages.forEach((page, index) => {
+          if (index > 0) {
+            const leftZone = document.createElement('div');
+            leftZone.className = 'nav-zone left';
+            leftZone.innerHTML = '&#10094;';
+            leftZone.addEventListener('click', () => {
+              pages[index - 1].scrollIntoView({ behavior: 'smooth' });
+            });
+            page.appendChild(leftZone);
+          }
+
+          if (index < pages.length - 1) {
+            const rightZone = document.createElement('div');
+            rightZone.className = 'nav-zone right';
+            rightZone.innerHTML = '&#10095;';
+            rightZone.addEventListener('click', () => {
+              pages[index + 1].scrollIntoView({ behavior: 'smooth' });
+            });
+            page.appendChild(rightZone);
+          }
+        });
+        
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+              if (entry.target.id) {
+                history.replaceState(null, null, '#' + entry.target.id);
+              }
+              const index = Array.from(pages).indexOf(entry.target);
+              persistentPage.textContent = `Side ${index + 1} av ${pages.length}`;
+              
+              const chapterTitle = entry.target.getAttribute('data-chapter');
+              if (chapterTitle) {
+                persistentChapter.textContent = chapterTitle;
+                persistentChapter.style.opacity = '1';
+              } else {
+                persistentChapter.style.opacity = '0';
+              }
+            }
+          });
+        }, {
+          threshold: 0.5
+        });
+
+        pages.forEach(page => observer.observe(page));
+        
         document.querySelectorAll('.toc-page a').forEach(a => {
             a.addEventListener('click', (e) => {
                 e.preventDefault();
                 const targetText = a.textContent.trim();
-                const h2s = document.querySelectorAll('.chapter-content h2');
+                const h2s = document.querySelectorAll('.page h2');
                 for (let h2 of h2s) {
                     if (h2.textContent.includes(targetText)) {
-                        h2.closest('.chapter-content').scrollIntoView({ behavior: 'smooth' });
+                        h2.closest('.page').scrollIntoView({ behavior: 'smooth' });
                         break;
                     }
                 }
             });
         });
 
-                // Keyboard Navigation
-        // Removed custom arrow key JS to allow native vertical scrolling
-
-        // Remove horizontal snap JS
-
+        // Keyboard Navigation (Arrow keys)
+        let isScrolling = false;
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+                e.preventDefault(); // Stop native browser scroll
+                if (isScrolling) return;
+                
+                const current = Array.from(pages).findIndex(p => p.getBoundingClientRect().left >= -10 && p.getBoundingClientRect().left < window.innerWidth - 10);
+                if (e.key === 'ArrowRight' && current >= 0 && current < pages.length - 1) {
+                    isScrolling = true;
+                    pages[current + 1].scrollIntoView({ behavior: 'smooth' });
+                    setTimeout(() => isScrolling = false, 600);
+                } else if (e.key === 'ArrowLeft' && current > 0) {
+                    isScrolling = true;
+                    pages[current - 1].scrollIntoView({ behavior: 'smooth' });
+                    setTimeout(() => isScrolling = false, 600);
+                }
+            }
+        });
+        
         // Handle deep link on load
         if (window.location.hash) {
             try {
@@ -520,7 +688,7 @@ if body:
         document.body.appendChild(lightbox);
 
         document.body.addEventListener('click', (e) => {
-          const img = e.target.closest('.chapter-content img, .chapter-content figure img');
+          const img = e.target.closest('.page-content img, .page-content figure img');
           if (img) {
             e.preventDefault();
             e.stopPropagation();
@@ -544,10 +712,10 @@ if body:
         
         // Mouse Wheel to Horizontal Scroll Translation
         let wheelTimeout;
-        container.addEventListener('wheel', (e) => {
+        bookTrack.addEventListener('wheel', (e) => {
             // Check if user is scrolling inside a vertically scrollable element
             let target = e.target;
-            while(target && target !== container) {
+            while(target && target !== bookTrack) {
                 if (target.scrollHeight > target.clientHeight) return;
                 target = target.parentNode;
             }
