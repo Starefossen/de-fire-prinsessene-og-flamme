@@ -29,10 +29,18 @@ for figure in soup.find_all('figure', attrs={'data-fil': True}):
         if width and height:
             img['width'] = width
             img['height'] = height
-            img['loading'] = 'lazy' # Safe to lazy load now that dimensions are known
+            # Removed lazy loading to fix WebKit multicol bug # Safe to lazy load now that dimensions are known
             
         figure.append(img)
         
+# Group portraits and their text into a flexbox wrapper to avoid float bugs in WebKit multicol
+for portrait in soup.find_all('figure', class_='portrait'):
+    next_p = portrait.find_next_sibling('p')
+    if next_p:
+        wrapper = soup.new_tag('div', attrs={'class': 'person-wrapper'})
+        portrait.wrap(wrapper)
+        wrapper.append(next_p)
+
 # Add PWA manifest and fonts to head
 head = soup.find('head')
 if head:
@@ -212,16 +220,27 @@ if style_tag:
   }
 
   
+  .person-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    break-inside: avoid;
+  }
+  
   .portrait {
-    float: left;
-    clear: left;
-    width: 140px;
-    margin: 0 1.5rem 1rem 0 !important;
-    display: block !important;
+    flex: 0 0 140px;
+    margin: 0 !important;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    background: #111827; /* Placeholder background */
+    aspect-ratio: 1/1;
+    overflow: hidden;
   }
   .portrait img {
-    border-radius: 16px !important;
-    aspect-ratio: 1/1;
+    height: 100%;
+    width: 100%;
     object-fit: cover;
   }
 
@@ -340,8 +359,6 @@ if style_tag:
   }
 
   .page-content > * {
-    break-inside: avoid;
-    page-break-inside: avoid;
     margin-bottom: 1.5rem;
   }
   
