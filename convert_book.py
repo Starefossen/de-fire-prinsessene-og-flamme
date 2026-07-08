@@ -115,12 +115,38 @@ if style_tag:
     pointer-events: auto;
   }
   
+  
+  .action-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    font-weight: 600;
+  }
+  .action-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+  }
+  .action-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
   .overview-btn {
     background: rgba(29, 35, 70, 0.8);
     border: 1px solid var(--rosa);
     color: white;
     padding: 0.5rem 1rem;
-    border-radius: 20px;
+    /* border-radius removed */
     font-family: 'Outfit', sans-serif;
     cursor: pointer;
     backdrop-filter: blur(5px);
@@ -144,6 +170,11 @@ if style_tag:
   
   figure {
     break-inside: avoid-column;
+  }
+
+  
+  .page-content p, .page-content h1, .page-content h2, .page-content h3, .page-content h4, .page-content li {
+    font-size: calc(1em * var(--font-scale, 1));
   }
 
   /* ---------- BOK-LAYOUT (Scroll Snapping) ---------- */
@@ -674,9 +705,23 @@ if body:
     header_row = soup.new_tag('div', attrs={'class': 'overlay-header'})
     header_row.append(soup.new_tag('div', attrs={'class': 'persistent-chapter', 'id': 'persistent-chapter'}))
     
-    overview_btn = soup.new_tag('button', attrs={'id': 'overview-btn', 'class': 'overview-btn'})
-    overview_btn.string = "⊞ Oversikt"
+    
+    # Font size down
+    font_down_btn = soup.new_tag('button', attrs={'id': 'font-down-btn', 'class': 'action-btn'})
+    font_down_btn.string = "A-"
+    header_row.append(font_down_btn)
+    
+    # Font size up
+    font_up_btn = soup.new_tag('button', attrs={'id': 'font-up-btn', 'class': 'action-btn'})
+    font_up_btn.string = "A+"
+    header_row.append(font_up_btn)
+
+    # Overview button (SVG icon)
+    overview_btn = soup.new_tag('button', attrs={'id': 'overview-btn', 'class': 'action-btn overview-btn'})
+    # Safari overview squares icon
+    overview_btn.append(bs4.BeautifulSoup('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>', 'html.parser'))
     header_row.append(overview_btn)
+
     
     overlay.append(header_row)
     overlay.append(soup.new_tag('div', attrs={'class': 'persistent-page', 'id': 'persistent-page'}))
@@ -846,6 +891,17 @@ if body:
         
         // Mouse Wheel to Horizontal Scroll Translation
         let wheelTimeout;
+        
+        let fontScale = 1;
+        document.getElementById('font-up-btn')?.addEventListener('click', () => {
+            fontScale += 0.1;
+            document.documentElement.style.setProperty('--font-scale', fontScale);
+        });
+        document.getElementById('font-down-btn')?.addEventListener('click', () => {
+            fontScale = Math.max(0.5, fontScale - 0.1);
+            document.documentElement.style.setProperty('--font-scale', fontScale);
+        });
+
         bookTrack.addEventListener('wheel', (e) => {
             if (bookTrack.classList.contains('overview-mode')) return;
             // Check if user is scrolling inside a vertically scrollable element
