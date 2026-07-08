@@ -126,133 +126,59 @@
 
   a:focus-visible{outline:2px solid var(--gull);outline-offset:3px;border-radius:6px}
 
-  /* ---------- BOK-LAYOUT (Scroll Snapping) ---------- */
+  /* ---------- BOK-LAYOUT ---------- */
   body {
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
   
   .book-container {
-    height: 100vh;
-    width: 100vw;
-    overflow-x: auto;
-    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
     scroll-behavior: smooth;
-    
-    /* Dynamic Multi-Column Pagination */
-    padding: 3rem 2rem;
-    box-sizing: border-box;
-    column-width: calc(100vw - 4rem);
-    column-gap: 4rem;
   }
   
-  /* Glassmorphism applied as a fixed overlay behind the text */
-  .book-container::before {
-    content: '';
-    position: fixed;
-    top: 2rem; bottom: 2rem;
-    left: 1rem; right: 1rem;
+  .chapter-content {
+    width: 100%;
+    max-width: 850px;
+    margin: 0 auto 4rem auto;
+    
+    /* Glassmorphism applied to each chapter */
     background: rgba(29, 35, 70, 0.45);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-radius: 28px;
     border: 1px solid rgba(255, 207, 230, 0.08);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    z-index: -1;
-    pointer-events: none;
-  }
-  
-  .chapter-content {
-    /* Each chapter starts on a new column */
-    break-before: column;
-    height: 100%;
-    position: relative;
+    
+    padding: 3rem 2rem;
     font-size: 1.15rem;
     line-height: 1.8;
-  }
-  
-  .chapter-content h2, .chapter-content h3 {
-    break-after: avoid;
-  }
-  .chapter-content figure, .chapter-content img {
-    break-inside: avoid;
+    box-sizing: border-box;
+    position: relative;
   }
   
   @media (min-width: 900px) {
     .book-container {
-      padding: 5rem 4rem;
-      column-width: calc(50vw - 4rem - 2rem); /* 2 pages per screen on desktop */
-      column-gap: 4rem;
-    }
-    .book-container::before {
-      top: 3rem; bottom: 3rem;
-      left: 2rem; right: 2rem;
+      padding: 4rem 2rem;
     }
     .chapter-content {
+      padding: 5rem 6rem;
       font-size: 1.25rem;
+      margin-bottom: 6rem;
     }
-  }
-  
-  .chapter {
-    display: contents;
-  }
-
-  @media (max-width: 899px) {
-    .chapter {
-      display: block;
-      flex: 0 0 100vw;
-      height: 100svh;
-      overflow-y: auto;
-      overflow-x: hidden;
-      scroll-snap-align: start;
-      scroll-snap-stop: always;
-      padding: 4rem 0; /* Space for persistent headers */
-      box-sizing: border-box;
-    }
-    .chapter-content {
-      flex: none;
-      height: auto;
-      width: 100vw;
-      scroll-snap-align: none;
-      padding: 1rem 1.5rem;
-    }
-    .chapter-content {
-      height: auto;
-      overflow-y: visible;
-      padding: 2rem 1.5rem;
-      column-count: 1;
-      column-gap: 0;
-    }
-    .nav-zone {
-      display: none !important;
-    }
-  }
-
-  .chapter-content::-webkit-scrollbar { display: none; }
-
-  @media (min-width: 900px) {
-    .chapter-content {
-      padding: 4rem 5rem;
-      column-count: 2;
-      column-gap: 6rem;
-    }
-  }
-
-  .chapter-content > * {
-    break-inside: avoid;
-    page-break-inside: avoid;
-    margin-bottom: 1.5rem;
   }
   
   .chapter-content img, .chapter-content figure {
     max-width: 100%;
     height: auto;
-    max-height: 55vh;
+    max-height: 65vh;
     object-fit: contain;
     border-radius: 12px;
-    margin-bottom: 2rem;
+    margin: 2rem auto;
     display: block;
-    margin-left: auto;
-    margin-right: auto;
     cursor: zoom-in;
     transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
@@ -675,46 +601,11 @@
             });
         });
 
-        // Keyboard Navigation (Arrow keys)
-        let isScrolling = false;
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-                // If we are on mobile (vertical), let browser do its thing
-                if (window.innerWidth < 900) return;
-                
-                e.preventDefault(); // Stop native browser scroll
-                if (isScrolling) return;
-                
-                const pageWidth = window.innerWidth;
-                const currentPos = container.scrollLeft;
-                const current = Math.round(currentPos / pageWidth);
-                
-                isScrolling = true;
-                if (e.key === 'ArrowRight') {
-                    container.scrollTo({ left: (current + 1) * pageWidth, behavior: 'smooth' });
-                } else if (e.key === 'ArrowLeft' && current > 0) {
-                    container.scrollTo({ left: (current - 1) * pageWidth, behavior: 'smooth' });
-                }
-                setTimeout(() => isScrolling = false, 500);
-            }
-        });
-        
-        // Dynamic Snap polyfill for horizontal desktop scrolling
-        let scrollTimeout;
-        container.addEventListener('scroll', () => {
-            if (window.innerWidth < 900) return; // Vertical on mobile
-            
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(() => {
-                const scrollPos = container.scrollLeft;
-                const pageWidth = window.innerWidth;
-                const target = Math.round(scrollPos / pageWidth) * pageWidth;
-                if (Math.abs(scrollPos - target) > 5) {
-                    container.scrollTo({ left: target, behavior: 'smooth' });
-                }
-            }, 150);
-        });
-        
+                // Keyboard Navigation
+        // Removed custom arrow key JS to allow native vertical scrolling
+
+        // Remove horizontal snap JS
+
         // Handle deep link on load
         if (window.location.hash) {
             try {
