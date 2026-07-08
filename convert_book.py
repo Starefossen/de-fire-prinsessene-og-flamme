@@ -167,10 +167,15 @@ if style_tag:
   h2, h3 {
     break-after: avoid-column;
   }
-  
   figure {
     break-inside: avoid-column;
+    page-break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    display: inline-block; /* Fixes multicol image vanishing bugs */
+    width: 100%;
+    transform: translateZ(0); /* Hardware acceleration to prevent vanishing */
   }
+
 
   
   .page-content p, .page-content h1, .page-content h2, .page-content h3, .page-content h4, .page-content li {
@@ -344,6 +349,8 @@ if style_tag:
   }
   .page.cover figure img {
     max-height: 40vh;
+    max-width: 100%;
+    object-fit: contain;
   }
   @media (min-width: 900px) {
     .page.cover .page-content {
@@ -371,6 +378,8 @@ if style_tag:
     }
     .page.cover figure img {
       max-height: 65vh;
+      max-width: 100%;
+      object-fit: contain;
     }
   }
 
