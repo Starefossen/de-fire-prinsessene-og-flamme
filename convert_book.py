@@ -45,10 +45,8 @@ if head:
 style_tag = soup.find('style')
 if style_tag:
     css_additions = """
-  
 
-
-  /* SPECIFIC FIX FOR PERSONGALLERI TO FIT HANNA IN LEFT COLUMN */
+  /* PERSONGALLERI: constrain group photo so portraits fit alongside */
   #prolog figure[data-fil="bilder/persongalleri"] {
     text-align: center;
   }
@@ -56,12 +54,6 @@ if style_tag:
     max-height: 22vh !important;
     width: auto;
     margin: 0 auto;
-  }
-
-  /* GLOBAL IMAGE SAFEGUARD */
-  .page-content img {
-    max-height: 40vh;
-    object-fit: contain;
   }
   /* OVERVIEW MODE */
   .book-track.overview-mode {
@@ -333,18 +325,24 @@ if style_tag:
     margin-bottom: 1.5rem;
   }
   
-  .page-content img, .page-content figure {
+  /* IMAGE STYLING — cosmetic only, no display override */
+  .page-content img {
     max-width: 100%;
     height: auto;
-    max-height: 55vh;
+    max-height: 40vh;
     object-fit: contain;
     border-radius: 12px;
-    margin-bottom: 2rem;
     display: block;
     margin-left: auto;
     margin-right: auto;
     cursor: zoom-in;
     transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  /* FIGURE STYLING — MUST stay inline-block to prevent WebKit multicol vanishing */
+  .page-content figure {
+    max-width: 100%;
+    margin-bottom: 1.2rem;
+    cursor: zoom-in;
   }
   
   .page-content img:hover, .page-content figure:hover img {
