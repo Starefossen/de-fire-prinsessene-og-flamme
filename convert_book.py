@@ -47,6 +47,17 @@ if style_tag:
     css_additions = """
   
 
+
+  /* SPECIFIC FIX FOR PERSONGALLERI TO FIT HANNA IN LEFT COLUMN */
+  #prolog figure[data-fil="bilder/persongalleri"] {
+    text-align: center;
+  }
+  #prolog figure[data-fil="bilder/persongalleri"] img {
+    max-height: 28vh !important;
+    width: auto;
+    margin: 0 auto;
+  }
+
   /* GLOBAL IMAGE SAFEGUARD */
   .page-content img {
     max-height: calc(100svh - 22rem);
