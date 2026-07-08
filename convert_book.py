@@ -45,6 +45,74 @@ if head:
 style_tag = soup.find('style')
 if style_tag:
     css_additions = """
+  
+  /* OVERVIEW MODE */
+  .book-track.overview-mode {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 6rem 2rem;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-snap-type: none;
+    align-content: start;
+    background: rgba(0,0,0,0.5);
+  }
+  
+  .book-track.overview-mode .page {
+    flex: none;
+    width: 100%;
+    height: 400px;
+    padding: 0;
+    scroll-snap-align: none;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background: transparent;
+  }
+  
+  .book-track.overview-mode .page:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(255, 207, 230, 0.4);
+    z-index: 10;
+  }
+  
+  .book-track.overview-mode .page-content {
+    width: 400%;
+    height: 400%;
+    transform: scale(0.25);
+    transform-origin: top left;
+    padding: 4rem;
+    pointer-events: none; /* Disable interaction in miniature view */
+  }
+
+  .overlay-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    pointer-events: auto;
+  }
+  
+  .overview-btn {
+    background: rgba(29, 35, 70, 0.8);
+    border: 1px solid var(--rosa);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-family: 'Outfit', sans-serif;
+    cursor: pointer;
+    backdrop-filter: blur(5px);
+    transition: all 0.2s ease;
+  }
+  .overview-btn:hover {
+    background: var(--rosa);
+    transform: scale(1.05);
+  }
+
   /* ---------- BOK-LAYOUT (Scroll Snapping) ---------- */
   body {
     overflow: hidden;
@@ -569,7 +637,15 @@ if main_tag:
 body = soup.find('body')
 if body:
     overlay = soup.new_tag('div', attrs={'class': 'book-overlay'})
-    overlay.append(soup.new_tag('div', attrs={'class': 'persistent-chapter', 'id': 'persistent-chapter'}))
+    
+    header_row = soup.new_tag('div', attrs={'class': 'overlay-header'})
+    header_row.append(soup.new_tag('div', attrs={'class': 'persistent-chapter', 'id': 'persistent-chapter'}))
+    
+    overview_btn = soup.new_tag('button', attrs={'id': 'overview-btn', 'class': 'overview-btn'})
+    overview_btn.string = "⊞ Oversikt"
+    header_row.append(overview_btn)
+    
+    overlay.append(header_row)
     overlay.append(soup.new_tag('div', attrs={'class': 'persistent-page', 'id': 'persistent-page'}))
     body.insert(0, overlay)
 
@@ -587,6 +663,29 @@ if body:
         const bookTrack = document.getElementById('book-track');
         const persistentChapter = document.getElementById('persistent-chapter');
         const persistentPage = document.getElementById('persistent-page');
+        const overviewBtn = document.getElementById('overview-btn');
+        overviewBtn.addEventListener('click', () => {
+            bookTrack.classList.toggle('overview-mode');
+            if (bookTrack.classList.contains('overview-mode')) {
+                overviewBtn.innerHTML = '✕ Lukk';
+            } else {
+                overviewBtn.innerHTML = '⊞ Oversikt';
+                // Find currently visible page and scroll to it
+                const current = Array.from(pages).find(p => p.getBoundingClientRect().left >= -10 && p.getBoundingClientRect().left < window.innerWidth - 10);
+                if (current) current.scrollIntoView({ behavior: 'auto' });
+            }
+        });
+        
+        pages.forEach(page => {
+            page.addEventListener('click', (e) => {
+                if (bookTrack.classList.contains('overview-mode')) {
+                    bookTrack.classList.remove('overview-mode');
+                    overviewBtn.innerHTML = '⊞ Oversikt';
+                    page.scrollIntoView({ behavior: 'auto' });
+                }
+            });
+        });
+
         
         pages.forEach((page, index) => {
           if (index > 0) {
@@ -654,6 +753,8 @@ if body:
             if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
                 e.preventDefault(); // Stop native browser scroll
                 if (isScrolling) return;
+                
+                if (bookTrack.classList.contains('overview-mode')) return;
                 
                 const current = Array.from(pages).findIndex(p => p.getBoundingClientRect().left >= -10 && p.getBoundingClientRect().left < window.innerWidth - 10);
                 if (e.key === 'ArrowRight' && current >= 0 && current < pages.length - 1) {
