@@ -7,6 +7,14 @@ import json
 with open('source.html', 'r', encoding='utf-8') as f:
     soup = bs4.BeautifulSoup(f, 'html.parser')
     
+# Process figure placeholders and inject actual images if they exist
+for figure in soup.find_all('figure', attrs={'data-fil': True}):
+    img_path = figure['data-fil'] + '.jpg'
+    if os.path.exists(img_path):
+        figure.clear()
+        img = soup.new_tag('img', src=img_path, loading='lazy')
+        figure.append(img)
+        
 # Add PWA manifest and fonts to head
 head = soup.find('head')
 if head:
