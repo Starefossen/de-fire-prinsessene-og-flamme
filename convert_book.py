@@ -46,14 +46,33 @@ style_tag = soup.find('style')
 if style_tag:
     css_additions = """
 
-  /* PERSONGALLERI: constrain group photo so portraits fit alongside */
-  #prolog figure[data-fil="bilder/persongalleri"] {
-    text-align: center;
+  /* PROLOG CHARACTER PAGE: use grid instead of buggy CSS columns */
+  .page.prolog .page-content {
+    column-count: 1 !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem 2.5rem;
+    align-content: start;
   }
-  #prolog figure[data-fil="bilder/persongalleri"] img {
-    max-height: 22vh !important;
-    width: auto;
-    margin: 0 auto;
+  /* Group photo in left column, spanning all rows */
+  .page.prolog .page-content > figure.illu:not(.portrait) {
+    grid-column: 1;
+    grid-row: 1 / 20;
+    align-self: start;
+  }
+  .page.prolog .page-content > figure.illu:not(.portrait) img {
+    max-height: 38vh !important;
+    width: 100%;
+    object-fit: contain;
+  }
+  /* Portraits and text flow into right column */
+  .page.prolog .portrait {
+    width: 90px !important;
+    height: 90px !important;
+    margin: 0 1rem 0.5rem 0 !important;
+  }
+  .page.prolog .page-content > p {
+    margin-bottom: 0.8rem;
   }
   /* OVERVIEW MODE */
   .book-track.overview-mode {
@@ -727,6 +746,7 @@ if main_tag:
             chunks.append(current_chunk)
             
         chap = soup.new_tag('article', attrs={'class': 'chapter'})
+        is_prolog = article.get('id') == 'prolog'
         for i in range(len(chunks)):
             # Give each page an ID to allow deep linking
             safe_chapter = chapter_title.replace(' ', '-').replace('·', '').replace('—', '-').lower()
@@ -734,7 +754,8 @@ if main_tag:
             safe_chapter = re.sub(r'-+', '-', safe_chapter).strip('-')
             page_id = f"page-{safe_chapter}-{i+1}"
             
-            page = soup.new_tag('section', attrs={'class': 'page', 'data-chapter': chapter_title, 'id': page_id})
+            page_class = 'page prolog' if is_prolog else 'page'
+            page = soup.new_tag('section', attrs={'class': page_class, 'data-chapter': chapter_title, 'id': page_id})
             content = soup.new_tag('div', attrs={'class': 'page-content'})
             
             chunk = chunks[i]
