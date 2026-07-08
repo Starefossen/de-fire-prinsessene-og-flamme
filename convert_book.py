@@ -376,6 +376,16 @@ if style_tag:
     margin-right: auto;
     cursor: zoom-in;
   }
+  
+  .page-content .illu img {
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+  
+  .page-content .illu.forside img {
+    aspect-ratio: auto;
+    object-fit: contain;
+  }
   /* FIGURE STYLING — MUST stay inline-block to prevent WebKit multicol vanishing */
   .page-content figure {
     max-width: 100%;
