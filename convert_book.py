@@ -210,7 +210,6 @@ if style_tag:
     -webkit-column-break-inside: avoid;
     display: inline-block; /* Fixes multicol image vanishing bugs */
     width: 100%;
-    transform: translateZ(0); /* Safe to GPU composite because inline-block cannot fragment */
   }
 
 
@@ -229,7 +228,6 @@ if style_tag:
     margin-bottom: 1.5rem;
     break-inside: avoid;
     page-break-inside: avoid;
-    transform: translateZ(0); /* Safe to GPU composite because inline-flex cannot fragment */
   }
   
   .portrait {
@@ -310,7 +308,7 @@ if style_tag:
     
     /* Flow */
     column-count: auto; /* Disable columns on mobile to allow vertical scroll */
-    column-fill: balance;
+    column-fill: auto;
     column-gap: 3rem;
     overflow-y: auto;
     overflow-x: hidden;
