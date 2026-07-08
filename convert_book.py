@@ -99,6 +99,42 @@ if style_tag:
     overflow-x: hidden;
     scrollbar-width: none;
   }
+  
+  .chapter {
+    display: contents;
+  }
+
+  @media (max-width: 899px) {
+    .chapter {
+      display: block;
+      flex: 0 0 100vw;
+      height: 100svh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      padding: 4rem 0; /* Space for persistent headers */
+      box-sizing: border-box;
+    }
+    .page {
+      flex: none;
+      height: auto;
+      width: 100vw;
+      scroll-snap-align: none;
+      padding: 1rem 1.5rem;
+    }
+    .page-content {
+      height: auto;
+      overflow-y: visible;
+      padding: 2rem 1.5rem;
+      column-count: 1;
+      column-gap: 0;
+    }
+    .nav-zone {
+      display: none !important;
+    }
+  }
+
   .page-content::-webkit-scrollbar { display: none; }
 
   @media (min-width: 900px) {
@@ -369,6 +405,7 @@ if main_tag:
     # Process Cover
     header = soup.find('header', class_='omslag')
     if header:
+        chap = soup.new_tag('article', attrs={'class': 'chapter'})
         page = soup.new_tag('section', attrs={'class': 'page cover'})
         content = soup.new_tag('div', attrs={'class': 'page-content'})
         
@@ -381,18 +418,21 @@ if main_tag:
                 
         content.insert(0, text_wrapper)
         page.append(content)
-        new_children.append(page)
+        chap.append(page)
+        new_children.append(chap)
         header.extract()
 
     # Process TOC
     nav = soup.find('nav', class_='toc')
     if nav:
+        chap = soup.new_tag('article', attrs={'class': 'chapter'})
         page = soup.new_tag('section', attrs={'class': 'page toc-page'})
         content = soup.new_tag('div', attrs={'class': 'page-content'})
         for child in list(nav.children):
             content.append(child)
         page.append(content)
-        new_children.append(page)
+        chap.append(page)
+        new_children.append(chap)
         nav.extract()
 
     # Process chapters
@@ -457,6 +497,7 @@ if main_tag:
         while len(figures) < len(chunks):
             figures.append(None)
             
+        chap = soup.new_tag('article', attrs={'class': 'chapter'})
         for i in range(len(chunks)):
             page = soup.new_tag('section', attrs={'class': 'page', 'data-chapter': chapter_title})
             content = soup.new_tag('div', attrs={'class': 'page-content'})
@@ -478,15 +519,19 @@ if main_tag:
                 content.append(el)
             
             page.append(content)
-            new_children.append(page)
+            chap.append(page)
+            
+        new_children.append(chap)
             
         article.extract()
 
     # Process footer
-    footer = soup.find('footer', class_='slutt')
+    footer = soup.find('footer')
     if footer:
-        page = soup.new_tag('section', attrs={'class': 'page slutt', 'data-chapter': 'Snipp snapp snute'})
+        chap = soup.new_tag('article', attrs={'class': 'chapter'})
+        page = soup.new_tag('section', attrs={'class': 'page'})
         content = soup.new_tag('div', attrs={'class': 'page-content', 'style': 'display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;'})
+        
         for child in list(footer.children):
             content.append(child)
             
@@ -495,7 +540,8 @@ if main_tag:
         content.append(btn)
         
         page.append(content)
-        new_children.append(page)
+        chap.append(page)
+        new_children.append(chap)
         footer.extract()
 
     # Append all pages to main
@@ -563,8 +609,7 @@ if body:
             }
           });
         }, {
-          root: bookTrack,
-          threshold: 0.6
+          threshold: 0.5
         });
 
         pages.forEach(page => observer.observe(page));
